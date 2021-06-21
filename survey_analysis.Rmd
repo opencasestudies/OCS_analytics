@@ -10,9 +10,9 @@ library(tidyverse)
 library(googlesheets4)
 ```
 
-
+Read in google form responses sheet: 
 ```{r}
 survey = read_sheet("https://docs.google.com/spreadsheets/d/10OBdqdZKAsXzamg-IQvlIzyGd0cS2kF-xBAKXJ0yFl0/edit#gid=385855959")
-head(survey)
 ```
+
 
