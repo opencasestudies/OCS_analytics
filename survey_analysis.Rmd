@@ -15,4 +15,12 @@ Read in google form responses sheet:
 survey = read_sheet("https://docs.google.com/spreadsheets/d/10OBdqdZKAsXzamg-IQvlIzyGd0cS2kF-xBAKXJ0yFl0/edit#gid=385855959")
 ```
 
+removing first two empty rows and filtering for only respondents that consented
+```{r}
+responses = survey[-1:-2,]
+consented = responses %>% rename(consent = 60) %>%
+  filter(consent == "Yes")
+consented$consent
+```
+
 
