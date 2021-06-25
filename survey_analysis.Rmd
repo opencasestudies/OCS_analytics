@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-library(tidyverse)
+library(tidyverse)1
 library(googlesheets4)
 ```
 
@@ -20,7 +20,7 @@ removing first two empty rows and filtering for only respondents that consented
 responses = survey[-1:-2,]
 consented = responses %>% rename(consent = 60) %>%
   filter(consent == "Yes")
-consented$consent
+consented
 ```
 
 
