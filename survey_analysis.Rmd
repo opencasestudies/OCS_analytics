@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-library(tidyverse)1
+library(tidyverse)
 library(googlesheets4)
 ```
 
@@ -21,6 +21,9 @@ responses = survey[-1:-2,]
 consented = responses %>% rename(consent = 60) %>%
   filter(consent == "Yes")
 consented
+# split into 3 objects based on responder class (student,educator,self-learner)
+# remove columns that are all NA
+# possibly transpose - depends which looks best
 ```
 
 
