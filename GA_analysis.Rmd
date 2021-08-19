@@ -10,4 +10,16 @@ knitr::opts_chunk$set(echo = TRUE)
 library(googleAnalyticsR)
 ```
 
+```{r}
+# ocsmeta = ga_meta("data", propertyId = 256923228)
+ocs_property_id = 256923228
+basic = ga_data(
+  ocs_property_id,
+  metrics = c("sessions", "newUsers", "totalUsers", "userEngagementDuration"),
+  date_range = c("2021-01-01", "2021-08-15")
+)
+basic
+```
+
+
 

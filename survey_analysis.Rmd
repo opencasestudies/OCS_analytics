@@ -18,12 +18,38 @@ survey = read_sheet("https://docs.google.com/spreadsheets/d/10OBdqdZKAsXzamg-IQv
 removing first two empty rows and filtering for only respondents that consented
 ```{r}
 responses = survey[-1:-2,]
-consented = responses %>% rename(consent = 60) %>%
-  filter(consent == "Yes")
+consented = responses %>% rename(consent = 60) %>% rename(responder_category = `How would you describe yourself (choose best option)? Note that you can say  "wish not to say"  for the "other" category.`) %>%
+  filter(consent == "Yes") 
 consented
 # split into 3 objects based on responder class (student,educator,self-learner)
 # remove columns that are all NA
 # possibly transpose - depends which looks best
 ```
+
+```{r}
+# splitting data table into different respondent types and removing all NA columns
+student = filter(consented, responder_category == "Student - using case studies for a course or to help with a course")
+student = student[,colSums(is.na(student))<nrow(student)]
+
+educator = filter(consented, responder_category == "Educator of Data Science/Stats/Public Health/other - looking for data and education material to use in courses")
+educator = educator[,colSums(is.na(educator))<nrow(educator)]
+
+self_learner = filter(consented, responder_category == "Self-learner - interested in learning more about the skills, topics, and or concepts covered in the case studies")
+self_learner = self_learner[,colSums(is.na(self_learner))<nrow(self_learner)]
+
+other = filter(consented, !(responder_category %in% c("Student - using case studies for a course or to help with a course", "Educator of Data Science/Stats/Public Health/other - looking for data and education material to use in courses", "Self-learner - interested in learning more about the skills, topics, and or concepts covered in the case studies")))
+other = other[,colSums(is.na(other))<nrow(other)]
+
+```
+
+use stringr to remove unneccessary info in responses
+ex: change responses to just Student, Educator, Self-learner etc -> str_extract
+ex: remove "interested in" from "interested in statistics etc" responses -> str_remove
+case_when() also helpful (from dplyr)
+see diet case study for help
+
+look into making codebook
+see slack
+https://www.alexcernat.com/easy-way-to-make-a-codebook-in-r/
 
 
