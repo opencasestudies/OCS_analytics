@@ -63,8 +63,8 @@ attr(studentdf$refer_back, "label") = "How likely are you to refer back to the c
 studentdf = studentdf %>% rename(famil_stats = `How familiar were you with the statistical methods presented in the case study before you read it?...12`)
 attr(studentdf$famil_stats, "label") = "How familiar were you with the statistical methods presented in the case study before you read it?...12"
 
-studentdf = studentdf %>% rename(reccomend = `How likely are you to recommend the case studies to others?...16`)
-attr(studentdf$reccomend, "label") = "How likely are you to recommend the case studies to others?...16"
+studentdf = studentdf %>% rename(recommend = `How likely are you to recommend the case studies to others?...16`)
+attr(studentdf$recommend, "label") = "How likely are you to recommend the case studies to others?...16"
 
 studentdf = studentdf %>% rename(famil_PH = `How familiar were you with the public health topics presented in the case study before you read it?...19`)
 attr(studentdf$famil_PH, "label") = "How familiar were you with the public health topics presented in the case study before you read it?...19"
@@ -93,6 +93,9 @@ attr(studentdf$case_studies, "label") = "What case study(ies) have you looked at
 studentdf = studentdf %>% rename(student_type = `What type of student would you describe yourself as?...68`)
 attr(studentdf$student_type, "label") = "What type of student would you describe yourself as?...68"
 
+studentdf = studentdf %>% rename(over18 = `Are you 18 or over? You cannot participate in this survey if you are under 18.`)
+attr(studentdf$over18, "label") = "Are you 18 or over? You cannot participate in this survey if you are under 18."
+
 studentdf = studentdf %>% rename(seen_casestudy = `If you have not seen a case study yet, select "Not yet" , otherwise select "Yes" to answer questions about a case study you have seen....74`)
 attr(studentdf$seen_casestudy, "label") = 'If you have not seen a case study yet, select "Not yet" , otherwise select "Yes" to answer questions about a case study you have seen....74'
 
@@ -117,6 +120,73 @@ student_codebook = map_df(studentdf, function(x) attributes(x)$label) %>%
   gather(key = Code, value = Label)
 student_codebook
 ```
+
+educator:
+```{r}
+educatordf = educator %>% rename(future_teach = `Are you interested in using our case study materials or the data from one of our case studies to teach in the future?`)
+attr(educatordf$future_teach, "label") = "Are you interested in using our case study materials or the data from one of our case studies to teach in the future?"
+
+educatordf = educatordf %>% rename(feedback1 = `Please provide any additional feedback you might have....5`)
+attr(educatordf$feedback1, "label") = "Please provide any additional feedback you might have....5"
+
+educatordf = educatordf %>% rename(recommend = `How likely are you to recommend the case studies to others?...25`)
+attr(educatordf$recommend, "label") = "How likely are you to recommend the case studies to others?...25"
+
+educatordf = educatordf %>% rename(learning_interests = `What specifically brought you to the case studies? (select all that apply)...26`)
+attr(educatordf$learning_interests, "label") = "What specifically brought you to the case studies? (select all that apply)...26"
+
+educatordf = educatordf %>% rename(might_teach = `Please tell us how you might teach (or already taught) with one or more of our case studies. (Example: for materials for students to practice writing about the results of a data analysis)`)
+attr(educatordf$might_teach, "label") = "Please tell us how you might teach (or already taught) with one or more of our case studies. (Example: for materials for students to practice writing about the results of a data analysis)"
+
+educatordf = educatordf %>% rename(type_student_taught = `What type of students do you teach? (select all that apply)`)
+attr(educatordf$type_student_taught, "label") = "What type of students do you teach? (select all that apply)"
+
+educatordf = educatordf %>% rename(course_type = `What type of course(s) would you (or have you) used our case studies for? (check all that apply)`)
+attr(educatordf$course_type, "label") = "What type of course(s) would you (or have you) used our case studies for? (check all that apply)"
+
+educatordf = educatordf %>% rename(case_studies = `What case study(ies) have you looked at?  (select all that apply)...53`)
+attr(educatordf$case_studies, "label") = "What case study(ies) have you looked at?  (select all that apply)...53"
+
+educatordf = educatordf %>% rename(ocs_interest = `Which case study or case studies might you be interested  in using. (select all that apply)`)
+attr(educatordf$ocs_interest, "label") = "Which case study or case studies might you be interested in using. (select all that apply)"
+
+educatordf = educatordf %>% rename(over18 = `Are you 18 or over? You cannot participate in this survey if you are under 18.`)
+attr(educatordf$over18, "label") = "Are you 18 or over? You cannot participate in this survey if you are under 18."
+
+educatordf = educatordf %>% rename(feedback2 = `Please provide any additional feedback you might have....76`)
+attr(educatordf$feedback2, "label") = "Please provide any additional feedback you might have....76"
+
+educatordf = educatordf %>% rename(parts_used = `Are you interested in using just the data, part of case study, or a full case study?`)
+attr(educatordf$parts_used, "label") = "Are you interested in using just the data, part of case study, or a full case study?"
+
+educatordf = educatordf %>% rename(materials_used = `Please tell us which materials you are most interested in using (or you already used to teach). (select all that apply)`)
+attr(educatordf$materials_used, "label") = "Please tell us which materials you are most interested in using (or you already used to teach). (select all that apply)"
+
+educatordf = educatordf %>% rename(data_access1 = `Is it clear how to locate, access, and download files from a case study repository?...81`)
+attr(educatordf$data_access1, "label") = "Is it clear how to locate, access, and download files from a case study repository?...81"
+
+educatordf = educatordf %>% rename(already_taught = `Have you already used our case studies or the data from our case studies to teach?`)
+attr(educatordf$already_taught, "label") = "Have you already used our case studies or the data from our case studies to teach?"
+
+educatordf = educatordf %>% rename(ocs_taught = `Which case studies (or data from a case study) did you use? (select all that apply)`)
+attr(educatordf$ocs_taught, "label") = "Which case studies (or data from a case study) did you use? (select all that apply)"
+
+educatordf = educatordf %>% rename(courses_taught = `What type of course(s) did you use our case studies or data for? (check all that apply)`)
+attr(educatordf$courses_taught, "label") = "What type of course(s) did you use our case studies or data for? (check all that apply)"
+
+educatordf = educatordf %>% rename(data_access2 = `Was it clear how to locate, access, and download files from a case study repository?`)
+attr(educatordf$data_access2, "label") = "Was it clear how to locate, access, and download files from a case study repository?"
+
+educatordf = educatordf %>% rename(how_taught = `Please tell us how you taught with our data or case studies - Example: for a lecture about data wrangling or to have students write a report about a data analysis.`)
+attr(educatordf$how_taught, "label") = "Please tell us how you taught with our data or case studies - Example: for a lecture about data wrangling or to have students write a report about a data analysis."
+
+educatordf = educatordf %>% rename(save_time = `Did using our data save you time?`)
+attr(educatordf$save_time, "label") = "Did using our data save you time?"
+
+educatordf = educatordf %>% rename(save_effort = `Did using our data save you effort?`)
+attr(educatordf$save_effort, "label") = "Did using our data save you effort?"
+```
+
 
 use stringr to remove unneccessary info in responses
 ex: change responses to just Student, Educator, Self-learner etc -> str_extract
