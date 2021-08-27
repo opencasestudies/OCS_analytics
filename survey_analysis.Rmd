@@ -18,9 +18,15 @@ survey = read_sheet("https://docs.google.com/spreadsheets/d/10OBdqdZKAsXzamg-IQv
 removing first two empty rows and filtering for only respondents that consented
 ```{r}
 responses = survey[-1:-2,]
-consented = responses %>% rename(consent = 60) %>% rename(responder_category = `How would you describe yourself (choose best option)? Note that you can say  "wish not to say"  for the "other" category.`) %>%
+consented = responses %>% rename(consent = `Do you consent to your responses being used for research purposes? Please see the description at the beginning of the survey for more information (use the back button within this survey if you wish to see it again).`) %>% rename(responder_category = `How would you describe yourself (choose best option)? Note that you can say  "wish not to say"  for the "other" category.`) %>%
   filter(consent == "Yes") 
-consented
+
+consented = consented %>% rename(date = Timestamp)
+attr(consented$date, "label") = "The date when the responder submitted the survey."
+attr(consented$responder_category, "label") = 'How would you describe yourself (choose best option)? Note that you can say  "wish not to say"  for the "other" category.'
+attr(consented$consent, "label") = "Do you consent to your responses being used for research purposes? Please see the description at the beginning of the survey for more information (use the back button within this survey if you wish to see it again)."
+
+
 # split into 3 objects based on responder class (student,educator,self-learner)
 # remove columns that are all NA
 # possibly transpose - depends which looks best
@@ -34,11 +40,119 @@ student = student[,colSums(is.na(student))<nrow(student)]
 educator = filter(consented, responder_category == "Educator of Data Science/Stats/Public Health/other - looking for data and education material to use in courses")
 educator = educator[,colSums(is.na(educator))<nrow(educator)]
 
-self_learner = filter(consented, responder_category == "Self-learner - interested in learning more about the skills, topics, and or concepts covered in the case studies")
+self_learner = filter(consented, (responder_category %in% c("Self-learner - interested in learning more about the skills, topics, and or concepts covered in the case studies", 
+                        "Data analyst - using data science in the corporate world")))
 self_learner = self_learner[,colSums(is.na(self_learner))<nrow(self_learner)]
 
-other = filter(consented, !(responder_category %in% c("Student - using case studies for a course or to help with a course", "Educator of Data Science/Stats/Public Health/other - looking for data and education material to use in courses", "Self-learner - interested in learning more about the skills, topics, and or concepts covered in the case studies")))
-other = other[,colSums(is.na(other))<nrow(other)]
+# other = filter(consented, !(responder_category %in% c("Student - using case studies for a course or to help with a course", "Educator of Data Science/Stats/Public Health/other - looking for data and education material to use in courses", "Self-learner - interested in learning more about the skills, topics, and or concepts covered in the case studies")))
+# other = other[,colSums(is.na(other))<nrow(other)]
+```
+
+
+
+### changing column/variable names, saving old name (question posed in survey) as label
+
+student:
+```{r}
+studentdf = student %>% rename(feedback1 = `Please provide any additional feedback you might have....6`)
+attr(studentdf$feedback1, "label") = "Please provide any additional feedback you might have....6"
+
+studentdf = studentdf %>% rename(refer_back = `How likely are you to refer back to the case study/studies in the future?...11`)
+attr(studentdf$refer_back, "label") = "How likely are you to refer back to the case study/studies in the future?...11"
+
+studentdf = studentdf %>% rename(famil_stats = `How familiar were you with the statistical methods presented in the case study before you read it?...12`)
+attr(studentdf$famil_stats, "label") = "How familiar were you with the statistical methods presented in the case study before you read it?...12"
+
+studentdf = studentdf %>% rename(reccomend = `How likely are you to recommend the case studies to others?...16`)
+attr(studentdf$reccomend, "label") = "How likely are you to recommend the case studies to others?...16"
+
+studentdf = studentdf %>% rename(famil_PH = `How familiar were you with the public health topics presented in the case study before you read it?...19`)
+attr(studentdf$famil_PH, "label") = "How familiar were you with the public health topics presented in the case study before you read it?...19"
+
+studentdf = studentdf %>% rename(famil_DS = `How familiar were you with the data science topics presented in the case study before you read it?...20`)
+attr(studentdf$famil_DS, "label") = "How familiar were you with the data science topics presented in the case study before you read it?...20"
+
+studentdf = studentdf %>% rename(learned_new = `I learned something new about: (select all that apply)...21`)
+attr(studentdf$learned_new, "label") = "I learned something new about: (select all that apply)...21"
+
+studentdf = studentdf %>% rename(how_found = `How did you find our case studies?...22`)
+attr(studentdf$how_found, "label") = "How did you find our case studies?...22"
+
+studentdf = studentdf %>% rename(learning_interests = `What specifically brought you to the case studies? (check all that apply)`)
+attr(studentdf$learning_interests, "label") = "What specifically brought you to the case studies? (check all that apply)"
+
+studentdf = studentdf %>% rename(enjoyment = `How enjoyable did you find the case study/studies as a way to learn about these topics?...50`)
+attr(studentdf$enjoyment, "label") = "How enjoyable did you find the case study/studies as a way to learn about these topics?...50"
+
+studentdf = studentdf %>% rename(data_access = `Were you able to locate, access, and download the data for the case study with relative ease?`)
+attr(studentdf$data_access, "label") = "Were you able to locate, access, and download the data for the case study with relative ease?"
+
+studentdf = studentdf %>% rename(case_studies = `What case study(ies) have you looked at?  (select all that apply)...61`)
+attr(studentdf$case_studies, "label") = "What case study(ies) have you looked at?  (select all that apply)...61"
+
+studentdf = studentdf %>% rename(student_type = `What type of student would you describe yourself as?...68`)
+attr(studentdf$student_type, "label") = "What type of student would you describe yourself as?...68"
+
+studentdf = studentdf %>% rename(seen_casestudy = `If you have not seen a case study yet, select "Not yet" , otherwise select "Yes" to answer questions about a case study you have seen....74`)
+attr(studentdf$seen_casestudy, "label") = 'If you have not seen a case study yet, select "Not yet" , otherwise select "Yes" to answer questions about a case study you have seen....74'
+
+studentdf = studentdf %>% rename(feedback2 = `Please provide any feedback you might have....75`)
+attr(studentdf$feedback2, "label") = 'Please provide any feedback you might have....75'
+
+studentdf = studentdf %>% rename(famil_tidyverse = `How familiar were you with the tidyverse programming material presented in the case study before you read it?...85`)
+attr(studentdf$famil_tidyverse, "label") = "How familiar were you with the tidyverse programming material presented in the case study before you read it?...85"
+
+studentdf = studentdf %>% rename(famil_nonR = `Do you have familiarity with another programming language besides R?...86`)
+attr(studentdf$famil_nonR, "label") = "Do you have familiarity with another programming language besides R?...86"
+
+studentdf = studentdf %>% rename(famil_R = `How familiar were you with R programming before you read the case study?...87`)
+attr(studentdf$famil_R, "label") = "How familiar were you with R programming before you read the case study?...87"
+
+studentdf = studentdf %>% rename(usefulness = `How useful did you find the case study/studies?...104`)
+attr(studentdf$usefulness, "label") = "How useful did you find the case study/studies?...104"
+```
+
+```{r}
+student_codebook = map_df(studentdf, function(x) attributes(x)$label) %>%
+  gather(key = Code, value = Label)
+student_codebook
+```
+
+
+
+```{r}
+surveydf = survey %>% rename(date = Timestamp)
+attr(surveydf$date, "label") = "The date when the responder submitted the survey."
+
+surveydf = surveydf %>% rename(category = `How would you describe yourself (choose best option)? Note that you can say  "wish not to say"  for the "other" category.`)
+attr(surveydf$category, "label") = 'How would you describe yourself (choose best option)? Note that you can say  "wish not to say"  for the "other" category.'
+
+surveydf = surveydf %>% rename(intended_course_use = `Do you intend to use a case study (or part of a case study) in one of your classes?`)
+attr(surveydf$intended_course_use, "label") = "Do you intend to use a case study (or part of a case study) in one of your classes?"
+
+surveydf = surveydf %>% rename(teach_future = `Are you interested in using our case study materials or the data from one of our case studies to teach in the future?`)
+attr(surveydf$teach_future, "label") = "Are you interested in using our case study materials or the data from one of our case studies to teach in the future?"
+
+surveydf = surveydf %>% rename(feedback1 = 5)
+attr(surveydf$feedback1, "label") = "Please provide any additional feedback you might have....5"
+
+surveydf = surveydf %>% rename(feedback2 = 6)
+attr(surveydf$feedback2, "label") = "Please provide any additional feedback you might have....6"
+
+surveydf = surveydf %>% rename(feedback3 = 7)
+attr(surveydf$feedback3, "label") = "Please provide any feedback you might have....7"
+
+surveydf = surveydf %>% rename(useful = `How useful did you find the case studies/data?`)
+attr(surveydf$useful, "label") = "How useful did you find the case studies/data?"
+
+surveydf = surveydf %>% rename(refer_back = 11)
+attr(surveydf$refer_back, "label") = "How likely are you to refer back to the case study/studies in the future?...11"
+```
+
+
+
+```{r}
+
 
 ```
 
