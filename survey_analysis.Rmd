@@ -118,7 +118,17 @@ student_codebook = map_df(studentdf, function(x) attributes(x)$label) %>%
 student_codebook
 ```
 
+use stringr to remove unneccessary info in responses
+ex: change responses to just Student, Educator, Self-learner etc -> str_extract
+ex: remove "interested in" from "interested in statistics etc" responses -> str_remove
+case_when() also helpful (from dplyr)
+see diet case study for help
 
+look into making codebook
+see slack
+https://www.alexcernat.com/easy-way-to-make-a-codebook-in-r/
+
+**ignore:**
 
 ```{r}
 surveydf = survey %>% rename(date = Timestamp)
@@ -147,23 +157,5 @@ attr(surveydf$useful, "label") = "How useful did you find the case studies/data?
 
 surveydf = surveydf %>% rename(refer_back = 11)
 attr(surveydf$refer_back, "label") = "How likely are you to refer back to the case study/studies in the future?...11"
-```
-
-
-
-```{r}
-
 
 ```
-
-use stringr to remove unneccessary info in responses
-ex: change responses to just Student, Educator, Self-learner etc -> str_extract
-ex: remove "interested in" from "interested in statistics etc" responses -> str_remove
-case_when() also helpful (from dplyr)
-see diet case study for help
-
-look into making codebook
-see slack
-https://www.alexcernat.com/easy-way-to-make-a-codebook-in-r/
-
-
