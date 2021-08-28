@@ -50,7 +50,7 @@ self_learner = self_learner[,colSums(is.na(self_learner))<nrow(self_learner)]
 
 
 
-### changing column/variable names, saving old name (question posed in survey) as label
+### changing column/variable names, saving old name (the question posed in survey) as label
 
 student:
 ```{r}
@@ -185,6 +185,24 @@ attr(educatordf$save_time, "label") = "Did using our data save you time?"
 
 educatordf = educatordf %>% rename(save_effort = `Did using our data save you effort?`)
 attr(educatordf$save_effort, "label") = "Did using our data save you effort?"
+
+educatordf = educatordf %>% rename(teach_enjoyment = `Compared to how you taught similar material previously,  did you enjoy using the case studies to teach with?`)
+attr(educatordf$teach_enjoyment, "label") = "Compared to how you taught similar material previously,  did you enjoy using the case studies to teach with?"
+
+educatordf = educatordf %>% rename(student_enjoyment = `Compared to how you taught similar material previously,  how will did your students seem to enjoy  the case studies?`)
+attr(educatordf$student_enjoyment, "label") = "Compared to how you taught similar material previously,  how will did your students seem to enjoy  the case studies?"
+
+educatordf = educatordf %>% rename(future_data_use = `Do you plan to use our data again in the future?`)
+attr(educatordf$future_data_use, "label") = "Do you plan to use our data again in the future?"
+
+educatordf = educatordf %>% rename(parts_taught = `What did you use to teach?`)
+attr(educatordf$parts_taught, "label") = "What did you use to teach?"
+
+educatordf = educatordf %>% rename(modular_clarity = `Was it clear how to use just part of the case study in a modular way?`)
+attr(educatordf$modular_clarity, "label") = "Was it clear how to use just part of the case study in a modular way?"
+
+educatordf = educatordf %>% rename(helpful_sections = `Which sections were most helpful for you? (select all that apply)`)
+attr(educatordf$helpful_sections, "label") = "Which sections were most helpful for you? (select all that apply)"
 ```
 
 
