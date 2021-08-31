@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(googlesheets4)
+library(openxlsx)
 ```
 
 Read in google form responses sheet: 
@@ -128,9 +129,11 @@ checking for missed questions; if no missed questions, display the data frame
 student_codebook = map_df(studentdf, function(x) attributes(x)$label) %>%
   gather(key = Code, value = Label)
 if(nrow(student_codebook) == ncol(student)){
+  student_check = 1
   student_codebook
 } else{
   diff = ncol(student) - nrow(student_codebook)
+  student_check = 0
   print(paste("Missed", diff, "column(s)!"))
   studentdf
 }
@@ -265,9 +268,11 @@ checking for missed questions; if no missed questions, display the data frame
 educator_codebook = map_df(educatordf, function(x) attributes(x)$label) %>%
   gather(key = Code, value = Label)
 if(nrow(educator_codebook) == ncol(educator)){
+  educator_check = 1
   educator_codebook
 } else{
   diff = ncol(educator) - nrow(educator_codebook)
+  educator_check = 0
   print(paste("Missed", diff, "column(s)!"))
   educatordf
 }
@@ -340,11 +345,27 @@ checking for missed questions; if no missed questions, display the data frame
 self_learner_codebook = map_df(self_learnerdf, function(x) attributes(x)$label) %>%
   gather(key = Code, value = Label)
 if(nrow(self_learner_codebook) == ncol(self_learner)){
+  self_learner_check = 1
   self_learner_codebook
 } else{
   diff = ncol(self_learner) - nrow(self_learner_codebook)
+  self_learner_check = 0
   print(paste("Missed", diff, "column(s)!"))
   self_learnerdf
+}
+```
+
+if checks passed for all three data frames, then create workbook with each
+codebook as a seperate sheet:
+```{r}
+checks = c(student_check, educator_check, self_learner_check)
+if(0 %in% checks){
+  print("At least one check failed.")
+} else{
+  codebook_list = list("student" = student_codebook, "educator" = educator_codebook, 
+                       "self_learner" = self_learner_codebook)
+  write.xlsx(codebook_list, "survey_codebooks.xlsx")
+  
 }
 ```
 
