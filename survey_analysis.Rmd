@@ -364,7 +364,7 @@ if(0 %in% checks){
 } else{
   codebook_list = list("student" = student_codebook, "educator" = educator_codebook, 
                        "self_learner" = self_learner_codebook)
-  write.xlsx(codebook_list, "survey_codebooks.xlsx")
+  write.xlsx(codebook_list, "survey_codebooks.xlsx", overwrite = TRUE)
   
 }
 ```
