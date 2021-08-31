@@ -48,7 +48,15 @@ self_learner = self_learner[,colSums(is.na(self_learner))<nrow(self_learner)]
 # other = other[,colSums(is.na(other))<nrow(other)]
 ```
 
+use stringr to remove unneccessary info in responses
+ex: change responses to just Student, Educator, Self-learner etc -> str_extract
+ex: remove "interested in" from "interested in statistics etc" responses -> str_remove
+case_when() also helpful (from dplyr)
+see diet case study for help
 
+look into making codebook
+see slack
+https://www.alexcernat.com/easy-way-to-make-a-codebook-in-r/
 
 ### changing column/variable names, saving old name (the question posed in survey) as label
 
@@ -115,10 +123,17 @@ studentdf = studentdf %>% rename(usefulness = `How useful did you find the case 
 attr(studentdf$usefulness, "label") = "How useful did you find the case study/studies?...104"
 ```
 
+checking for missed questions; if no missed questions, display the data frame
 ```{r}
 student_codebook = map_df(studentdf, function(x) attributes(x)$label) %>%
   gather(key = Code, value = Label)
-student_codebook
+if(nrow(student_codebook) == ncol(student)){
+  student_codebook
+} else{
+  diff = ncol(student) - nrow(student_codebook)
+  print(paste("Missed", diff, "column(s)!"))
+  studentdf
+}
 ```
 
 educator:
@@ -180,11 +195,11 @@ attr(educatordf$data_access2, "label") = "Was it clear how to locate, access, an
 educatordf = educatordf %>% rename(how_taught = `Please tell us how you taught with our data or case studies - Example: for a lecture about data wrangling or to have students write a report about a data analysis.`)
 attr(educatordf$how_taught, "label") = "Please tell us how you taught with our data or case studies - Example: for a lecture about data wrangling or to have students write a report about a data analysis."
 
-educatordf = educatordf %>% rename(save_time = `Did using our data save you time?`)
-attr(educatordf$save_time, "label") = "Did using our data save you time?"
+educatordf = educatordf %>% rename(data_save_time = `Did using our data save you time?`)
+attr(educatordf$data_save_time, "label") = "Did using our data save you time?"
 
-educatordf = educatordf %>% rename(save_effort = `Did using our data save you effort?`)
-attr(educatordf$save_effort, "label") = "Did using our data save you effort?"
+educatordf = educatordf %>% rename(data_save_effort = `Did using our data save you effort?`)
+attr(educatordf$data_save_effort, "label") = "Did using our data save you effort?"
 
 educatordf = educatordf %>% rename(teach_enjoyment = `Compared to how you taught similar material previously,  did you enjoy using the case studies to teach with?`)
 attr(educatordf$teach_enjoyment, "label") = "Compared to how you taught similar material previously,  did you enjoy using the case studies to teach with?"
@@ -203,18 +218,138 @@ attr(educatordf$modular_clarity, "label") = "Was it clear how to use just part o
 
 educatordf = educatordf %>% rename(helpful_sections = `Which sections were most helpful for you? (select all that apply)`)
 attr(educatordf$helpful_sections, "label") = "Which sections were most helpful for you? (select all that apply)"
+
+educatordf = educatordf %>% rename(do_different = `Is there anything you would do differently next time?`)
+attr(educatordf$do_different, "label") = "Is there anything you would do differently next time?"
+
+educatordf = educatordf %>% rename(student_comprehension = `Compared to how you taught similar material previously,  how well did students seem to learn the content that you taught using a case study?`)
+attr(educatordf$student_comprehension, "label") = "Compared to how you taught similar material previously,  how well did students seem to learn the content that you taught using a case study?"
+
+educatordf = educatordf %>% rename(future_cs_use = `Do you plan to use our case studies (not just data) in the future?`)
+attr(educatordf$future_cs_use, "label") = "Do you plan to use our case studies (not just data) in the future?"
+
+educatordf = educatordf %>% rename(data_types = `What type of data did you use? (select all that apply)`)
+attr(educatordf$data_types, "label") = "What type of data did you use? (select all that apply)"
+
+educatordf = educatordf %>% rename(teaching_difference = `How different was incorporating the case study or parts of the case study compared to how you typically teach similar material?`)
+attr(educatordf$teaching_difference, "label") = "How different was incorporating the case study or parts of the case study compared to how you typically teach similar material?"
+
+educatordf = educatordf %>% rename(cs_save_time = `Did incorporating our case study materials into your class, save you time?`)
+attr(educatordf$cs_save_time, "label") = "Did incorporating our case study materials into your class, save you time?"
+
+educatordf = educatordf %>% rename(cs_save_effort = `Did incorporating our case study materials into your class, save you effort?`)
+attr(educatordf$cs_save_effort, "label") = "Did incorporating our case study materials into your class, save you effort?"
+
+educatordf = educatordf %>% rename(learned_new = `Did you learn anything new using the case studies?`)
+attr(educatordf$learned_new, "label") = "Did you learn anything new using the case studies?"
+
+educatordf = educatordf %>% rename(teaching_new = `Did using our case studies allow you to incorporate something new into your teaching?`)
+attr(educatordf$teaching_new, "label") = "Did using our case studies allow you to incorporate something new into your teaching?"
+
+educatordf = educatordf %>% rename(biggest_benefit = `What was the biggest benefit of using the case study?`)
+attr(educatordf$biggest_benefit, "label") = "What was the biggest benefit of using the case study?"
+
+educatordf = educatordf %>% rename(difficult_aspect = `What was the most difficult aspect of using the case study?`)
+attr(educatordf$difficult_aspect, "label") = "What was the most difficult aspect of using the case study?"
+
+educatordf = educatordf %>% rename(typically_teach = `How do you typically teach similar material?`)
+attr(educatordf$typically_teach, "label") = "How do you typically teach similar material?"
+
+educatordf = educatordf %>% rename(how_different_typical = `If it was different from how you typically teach, how?`)
+attr(educatordf$how_different_typical, "label") = "If it was different from how you typically teach, how?"
+
+```
+
+checking for missed questions; if no missed questions, display the data frame
+```{r}
+educator_codebook = map_df(educatordf, function(x) attributes(x)$label) %>%
+  gather(key = Code, value = Label)
+if(nrow(educator_codebook) == ncol(educator)){
+  educator_codebook
+} else{
+  diff = ncol(educator) - nrow(educator_codebook)
+  print(paste("Missed", diff, "column(s)!"))
+  educatordf
+}
+```
+
+self_learner: 
+```{r}
+self_learnerdf = self_learner %>% rename(learning_interests = `What specifically brought you to the case studies? (select all that apply)...31`)
+attr(self_learnerdf$learning_interests, "label") = "What specifically brought you to the case studies? (select all that apply)...31"
+
+self_learnerdf = self_learnerdf %>% rename(famil_stats = `How familiar were you with the statistical methods presented in the case study before you read it?...32`)
+attr(self_learnerdf$famil_stats, "label") = "How familiar were you with the statistical methods presented in the case study before you read it?...32"
+
+self_learnerdf = self_learnerdf %>% rename(famil_PH = `How familiar were you with the public health topics presented in the case study before you read it?...33`)
+attr(self_learnerdf$famil_PH, "label") = "How familiar were you with the public health topics presented in the case study before you read it?...33"
+
+self_learnerdf = self_learnerdf %>% rename(famil_DS = `How familiar were you with the data science topics presented in the case study before you read it?...34`)
+attr(self_learnerdf$famil_DS, "label") = "How familiar were you with the data science topics presented in the case study before you read it?...34"
+
+self_learnerdf = self_learnerdf %>% rename(usefulness = `How useful did you find the case study/studies?...36`)
+attr(self_learnerdf$usefulness, "label") = "How useful did you find the case study/studies?...36"
+
+self_learnerdf = self_learnerdf %>% rename(refer_back = `How likely are you to refer back to the case study/studies in the future?...37`)
+attr(self_learnerdf$refer_back, "label") = "How likely are you to refer back to the case study/studies in the future?...37"
+
+self_learnerdf = self_learnerdf %>% rename(recommend = `How likely are you to recommend the case studies to others?...38`)
+attr(self_learnerdf$recommend, "label") = "How likely are you to recommend the case studies to others?...38"
+
+self_learnerdf = self_learnerdf %>% rename(feedback1 = `Please provide any feedback you might have....41`)
+attr(self_learnerdf$feedback1, "label") = "Please provide any feedback you might have....41"
+
+self_learnerdf = self_learnerdf %>% rename(learned_new = `I learned something new about: (select all that apply)...43`)
+attr(self_learnerdf$learned_new, "label") = "I learned something new about: (select all that apply)...43"
+
+self_learnerdf = self_learnerdf %>% rename(enjoyment = `How enjoyable did you find the case study/studies as a way to learn about these topics?...49`)
+attr(self_learnerdf$enjoyment, "label") = "How enjoyable did you find the case study/studies as a way to learn about these topics?...49"
+
+self_learnerdf = self_learnerdf %>% rename(data_access = `Were you able to locate, access, and download files from the case study repository with relative ease?`)
+attr(self_learnerdf$data_access, "label") = "Were you able to locate, access, and download files from the case study repository with relative ease?"
+
+self_learnerdf = self_learnerdf %>% rename(case_studies = `What case study(ies) have you looked at?  (select all that apply)...62`)
+attr(self_learnerdf$case_studies, "label") = "What case study(ies) have you looked at?  (select all that apply)...62"
+
+self_learnerdf = self_learnerdf %>% rename(over18 = `Are you 18 or over? You cannot participate in this survey if you are under 18.`)
+attr(self_learnerdf$over18, "label") = "Are you 18 or over? You cannot participate in this survey if you are under 18."
+
+self_learnerdf = self_learnerdf %>% rename(seen_casestudy = `If you have not seen a case study yet, select "Not yet" , otherwise select "Yes" to answer questions about a case study you have seen....71`)
+attr(self_learnerdf$seen_casestudy, "label") = 'If you have not seen a case study yet, select "Not yet" , otherwise select "Yes" to answer questions about a case study you have seen....71'
+
+self_learnerdf = self_learnerdf %>% rename(feedback2 = `Please provide any feedback you might have....72`)
+attr(self_learnerdf$feedback2, "label") = "Please provide any feedback you might have....72"
+
+self_learnerdf = self_learnerdf %>% rename(field_of_work = `What field do you work in? (we would like to know more about who is interested in our case studies - you are not required to answer)...73`)
+attr(self_learnerdf$field_of_work, "label") = "What field do you work in? (we would like to know more about who is interested in our case studies - you are not required to answer)...73"
+
+self_learnerdf = self_learnerdf %>% rename(famil_R = `How familiar were you with R programming before you read the case study?...88`)
+attr(self_learnerdf$famil_R, "label") = "How familiar were you with R programming before you read the case study?...88"
+
+self_learnerdf = self_learnerdf %>% rename(famil_tidyverse = `How familiar were you with the tidyverse programming material presented in the case study before you read it?...89`)
+attr(self_learnerdf$famil_tidyverse, "label") = "How familiar were you with the tidyverse programming material presented in the case study before you read it?...89"
+
+self_learnerdf = self_learnerdf %>% rename(famil_nonR = `Do you have familiarity with another programming language besides R?...90`)
+attr(self_learnerdf$famil_nonR, "label") = "Do you have familiarity with another programming language besides R?...90"
+
+
+```
+
+checking for missed questions; if no missed questions, display the data frame
+```{r}
+self_learner_codebook = map_df(self_learnerdf, function(x) attributes(x)$label) %>%
+  gather(key = Code, value = Label)
+if(nrow(self_learner_codebook) == ncol(self_learner)){
+  self_learner_codebook
+} else{
+  diff = ncol(self_learner) - nrow(self_learner_codebook)
+  print(paste("Missed", diff, "column(s)!"))
+  self_learnerdf
+}
 ```
 
 
-use stringr to remove unneccessary info in responses
-ex: change responses to just Student, Educator, Self-learner etc -> str_extract
-ex: remove "interested in" from "interested in statistics etc" responses -> str_remove
-case_when() also helpful (from dplyr)
-see diet case study for help
 
-look into making codebook
-see slack
-https://www.alexcernat.com/easy-way-to-make-a-codebook-in-r/
 
 **ignore:**
 
