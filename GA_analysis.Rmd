@@ -21,5 +21,6 @@ basic = ga_data(
 basic
 ```
 
-
+what does time elapsed in google analytics mean? 
+time the page is open on the laptop? or time spent actively engaging with the page? 
 
