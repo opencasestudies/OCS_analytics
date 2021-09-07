@@ -24,3 +24,5 @@ basic
 what does time elapsed in google analytics mean? 
 time the page is open on the laptop? or time spent actively engaging with the page? 
 
+cool figure to make: # of events (or users) per day (events y axis, days x axis)
+have a timeline of project development along the x-axis to view if website traffic was changed at all by project developments. 
