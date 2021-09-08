@@ -433,8 +433,6 @@ studentdf %<>%
       famil_stats == "Regularly perform the statistical methods covered/already knew all or most of the material" ~ "4", 
       TRUE ~ famil_stats)) %>%
   mutate(famil_stats = as.numeric(famil_stats))
-# case_when() ^ !
-
 attr(studentdf$famil_stats, "label") = "How familiar were you with the statistical methods presented in the case study before you read it?...12"
 attr(studentdf$famil_stats, "values") = 
   list("1" = "Never heard about the statistical topics covered", 
@@ -451,8 +449,22 @@ attr(studentdf$recommend, "label") =
 studentdf = studentdf %>% 
   rename(famil_PH = 
            `How familiar were you with the public health topics presented in the case study before you read it?...19`)
+studentdf %<>% 
+  mutate(
+    famil_PH = case_when(
+      famil_PH == "Never heard about the public health topics" ~ "1", 
+      famil_PH == "Had heard briefly about the topics" ~ "2", 
+      famil_PH == "Had an understanding about the topics but not as much as the case study covered"~ "3", 
+      famil_PH == "Already knew all or most of the material" ~ "4", 
+      TRUE ~ famil_PH)) %>%
+  mutate(famil_PH = as.numeric(famil_PH))
 attr(studentdf$famil_PH, "label") = 
   "How familiar were you with the public health topics presented in the case study before you read it?...19"
+attr(studentdf$famil_PH, "values") = 
+  list("1" = "Never heard about the public health topics", 
+       "2" = "Had heard briefly about the topics", 
+       "3" = "Had an understanding about the topics but not as much as the case study covered", 
+       "4" = "Already knew all or most of the material")
 
 studentdf = studentdf %>% 
   rename(famil_DS = 
