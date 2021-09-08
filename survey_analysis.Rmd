@@ -425,12 +425,16 @@ studentdf = studentdf %>%
   rename(famil_stats = 
            `How familiar were you with the statistical methods presented in the case study before you read it?...12`)
 studentdf %<>% 
-  mutate(studentdf, famil_stats = 
-           ifelse(famil_stats == "Never heard about the statistical topics covered", 1, 
-           ifelse(famil_stats == "Had heard briefly about the statistical topics covered", 2, 
-           ifelse(famil_stats == "Had an understanding about the topics but not as much as the case study covered", 3, 
-           ifelse(famil_stats == "Regularly perform the statistical methods covered/already knew all or most of the material", 4, famil_stats)))))
+  mutate(
+    famil_stats = case_when(
+      famil_stats == "Never heard about the statistical topics covered" ~ "1", 
+      famil_stats == "Had heard briefly about the statistical topics covered" ~ "2", 
+      famil_stats == "Had an understanding about the topics but not as much as the case study covered"~ "3", 
+      famil_stats == "Regularly perform the statistical methods covered/already knew all or most of the material" ~ "4", 
+      TRUE ~ famil_stats)) %>%
+  mutate(famil_stats = as.numeric(famil_stats))
 # case_when() ^ !
+
 attr(studentdf$famil_stats, "label") = "How familiar were you with the statistical methods presented in the case study before you read it?...12"
 attr(studentdf$famil_stats, "values") = 
   list("1" = "Never heard about the statistical topics covered", 
