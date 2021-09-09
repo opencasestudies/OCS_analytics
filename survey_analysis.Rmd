@@ -144,7 +144,17 @@ educatordf = educatordf %>%
   rename(case_studies = 
            `What case study(ies) have you looked at?  (select all that apply)...53`)
 educatordf %<>% 
-  mutate(case_studies = gsub(": .*", "", str_remove(case_studies, "Case study about ")))
+  mutate(
+    case_studies = str_extract_all(case_studies,
+                    paste(c("obesity:", "diet:", "school shootings", 
+                            "multicollinearity and RTC laws (wrangling)",
+                            "multicollinearity and RTC laws (analysis)",
+                            "predicting air pollution", "CO2 emissions",
+                            "youth disconnection", "youth mental health", 
+                            "opioid shipments in the US", "None",
+                            "vaping behaviours among US youths"), collapse = "|")),
+    case_studies = str_remove_all(case_studies, ":")
+  )
 attr(educatordf$case_studies, "label") = 
   "What case study(ies) have you looked at?  (select all that apply)...53"
 
@@ -520,14 +530,42 @@ attr(studentdf$learned_new, "values") =
 studentdf = studentdf %>%
   rename(how_found = 
            `How did you find our case studies?...22`)
+studentdf %<>% 
+  mutate(
+    how_found = case_when(
+      how_found == "Using case studies as part of a course (asked to do so by an instructor)" ~ "course assignment",
+      how_found == "Using case studies to supplement other instruction (not asked to do so by an instructor)" ~ "course supplement",
+      TRUE ~ how_found)
+  )
 attr(studentdf$how_found, "label") = 
   "How did you find our case studies?...22"
+attr(studentdf$how_found, "values") = 
+  list("course assignment" = "Using case studies as part of a course (asked to do so by an instructor)", 
+       "course supplement" = "Using case studies to supplement other instruction (not asked to do so by an instructor)")
 
 studentdf = studentdf %>% 
   rename(learning_interests = 
            `What specifically brought you to the case studies? (check all that apply)`)
+studentdf %<>% 
+  mutate(
+    learning_interests = str_replace_all(learning_interests,
+      "interested in a specific case study public health topic \\(such as environment, mental health, etc\\.\\)", "specific public health topic"),
+    learning_interests = str_extract_all(learning_interests,
+                paste(c("statistics","specific statistical topic", 
+                        "data science", "specific data science skill", 
+                        "R programming", "tidyverse", "specific public health topic",
+                        "public health"), collapse="|")))
 attr(studentdf$learning_interests, "label") = 
   "What specifically brought you to the case studies? (check all that apply)"
+attr(studentdf$learning_interests, "values") = 
+  list("statistics" = "interested in learning more about statistics in general",
+       "data science" = "interested in learning more about data science/data analysis in general",
+       "public health" = "interested in learning more about public health in general",
+       "R programming" = "interested in learning more about R programming in general",
+       "tidyverse" = "interested in learning more about the tidyverse in general",
+       "specific public health topic" = "interested in a specific case study public health topic (such as environment, mental health, etc.)",
+       "specific data science skill" = "interested in a specific data science skill (such as how to create a dashboard, machine learning, etc.)",
+       "specific statistical topic" = "interested in a specific statistical topic (such as how to perform a paired t-test)")
 
 studentdf = studentdf %>% 
   rename(enjoyment = 
@@ -538,12 +576,37 @@ attr(studentdf$enjoyment, "label") =
 studentdf = studentdf %>% 
   rename(data_access = 
            `Were you able to locate, access, and download the data for the case study with relative ease?`)
+studentdf %<>% 
+  mutate(
+    data_access = case_when(
+      data_access == "Yes, I found the files I needed with no issue" ~ "Yes",
+      data_access == "I found the files but had some difficulty" ~ "some difficulty",
+      data_access == "No, I could not find the files I needed" ~ "No",
+      TRUE ~ data_access
+    )
+  )
 attr(studentdf$data_access, "label") = 
   "Were you able to locate, access, and download the data for the case study with relative ease?"
+attr(studentdf$data_access, "values") = 
+  list("Yes" = "Yes, I found the files I needed with no issue",
+       "some difficulty" = "I found the files but had some difficulty",
+       "No" = "No, I could not find the files I needed")
 
 studentdf = studentdf %>% 
   rename(case_studies = 
            `What case study(ies) have you looked at?  (select all that apply)...61`)
+studentdf %<>% 
+  mutate(
+    case_studies = str_extract_all(case_studies,
+                    paste(c("obesity:", "diet:", "school shootings", 
+                            "multicollinearity and RTC laws \\(wrangling\\)",
+                            "multicollinearity and RTC laws \\(analysis\\)",
+                            "predicting air pollution", "CO2 emissions",
+                            "youth disconnection", "youth mental health", 
+                            "opioid shipments in the US", "None",
+                            "vaping behaviours among US youths"), collapse = "|")),
+    case_studies = str_remove_all(case_studies, ":")
+  )
 attr(studentdf$case_studies, "label") = 
   "What case study(ies) have you looked at?  (select all that apply)...61"
 
