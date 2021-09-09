@@ -431,7 +431,9 @@ studentdf %<>%
       famil_stats == "Had heard briefly about the statistical topics covered" ~ "2", 
       famil_stats == "Had an understanding about the topics but not as much as the case study covered"~ "3", 
       famil_stats == "Regularly perform the statistical methods covered/already knew all or most of the material" ~ "4", 
-      TRUE ~ famil_stats)) %>%
+      TRUE ~ famil_stats
+      )
+    ) %>%
   mutate(famil_stats = as.numeric(famil_stats))
 attr(studentdf$famil_stats, "label") = "How familiar were you with the statistical methods presented in the case study before you read it?...12"
 attr(studentdf$famil_stats, "values") = 
@@ -456,7 +458,9 @@ studentdf %<>%
       famil_PH == "Had heard briefly about the topics" ~ "2", 
       famil_PH == "Had an understanding about the topics but not as much as the case study covered"~ "3", 
       famil_PH == "Already knew all or most of the material" ~ "4", 
-      TRUE ~ famil_PH)) %>%
+      TRUE ~ famil_PH
+      )
+    ) %>%
   mutate(famil_PH = as.numeric(famil_PH))
 attr(studentdf$famil_PH, "label") = 
   "How familiar were you with the public health topics presented in the case study before you read it?...19"
@@ -469,14 +473,49 @@ attr(studentdf$famil_PH, "values") =
 studentdf = studentdf %>% 
   rename(famil_DS = 
            `How familiar were you with the data science topics presented in the case study before you read it?...20`)
+studentdf %<>% 
+  mutate(
+    famil_DS = case_when(
+      famil_DS == "Never heard about the data science topics" ~ "1", 
+      famil_DS == "Had heard briefly about the topics" ~ "2", 
+      famil_DS == "Had an understanding about the topics but not as much as the case study covered"~ "3", 
+      famil_DS == "Already knew all or most of the material" ~ "4", 
+      TRUE ~ famil_DS
+      )
+    ) %>%
+  mutate(famil_DS = as.numeric(famil_DS))
 attr(studentdf$famil_DS, "label") = 
   "How familiar were you with the data science topics presented in the case study before you read it?...20"
+attr(studentdf$famil_DS, "values") = 
+  list("1" = "Never heard about the data science topics", 
+       "2" = "Had heard briefly about the topics", 
+       "3" = "Had an understanding about the topics but not as much as the case study covered", 
+       "4" = "Already knew all or most of the material")
 
 studentdf = studentdf %>%
   rename(learned_new = 
            `I learned something new about: (select all that apply)...21`)
+studentdf %<>% 
+  mutate(
+    learned_new = str_replace_all(learned_new, "How to implement a statistical method using R", "Rstats"),
+    learned_new = str_replace_all(learned_new, "A statistical method or concept", "statistics")
+  ) %>%
+  mutate(
+    learned_new = 
+      str_extract_all(learned_new,
+                paste(c("statistics","Rstats", "import", "visualization",
+                        "wrangling", "communication", "public health", 
+                        "All of the above", "None"), collapse="|")))
 attr(studentdf$learned_new, "label") =
   "I learned something new about: (select all that apply)...21"
+attr(studentdf$learned_new, "values") = 
+  list("statistics" = "A statistical method or concept",
+       "Rstats" = "How to implement a statistical method using R",
+       "import" = "Data import methods", 
+       "visualization" = "Data visualization methods",
+       "wrangling" = "Data wrangling methods",
+       "communication" = "Data communication methods",
+       "public health" = "The public health topics presented")
 
 studentdf = studentdf %>%
   rename(how_found = 
