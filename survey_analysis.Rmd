@@ -443,8 +443,8 @@ studentdf %<>%
       famil_stats == "Regularly perform the statistical methods covered/already knew all or most of the material" ~ "4", 
       TRUE ~ famil_stats
       )
-    ) %>%
-  mutate(famil_stats = as.numeric(famil_stats))
+    ) #%>%
+  #mutate(famil_stats = as.numeric(famil_stats))
 attr(studentdf$famil_stats, "label") = "How familiar were you with the statistical methods presented in the case study before you read it?...12"
 attr(studentdf$famil_stats, "values") = 
   list("1" = "Never heard about the statistical topics covered", 
@@ -470,8 +470,8 @@ studentdf %<>%
       famil_PH == "Already knew all or most of the material" ~ "4", 
       TRUE ~ famil_PH
       )
-    ) %>%
-  mutate(famil_PH = as.numeric(famil_PH))
+    ) #%>%
+  #mutate(famil_PH = as.numeric(famil_PH))
 attr(studentdf$famil_PH, "label") = 
   "How familiar were you with the public health topics presented in the case study before you read it?...19"
 attr(studentdf$famil_PH, "values") = 
@@ -492,8 +492,8 @@ studentdf %<>%
       famil_DS == "Already knew all or most of the material" ~ "4", 
       TRUE ~ famil_DS
       )
-    ) %>%
-  mutate(famil_DS = as.numeric(famil_DS))
+    ) #%>%
+  #mutate(famil_DS = as.numeric(famil_DS))
 attr(studentdf$famil_DS, "label") = 
   "How familiar were you with the data science topics presented in the case study before you read it?...20"
 attr(studentdf$famil_DS, "values") = 
@@ -678,16 +678,77 @@ if(nrow(student_codebook) == ncol(student)){
 self_learner: 
 ```{r}
 self_learnerdf = self_learner %>% rename(learning_interests = `What specifically brought you to the case studies? (select all that apply)...31`)
+self_learnerdf %<>% 
+  mutate(learning_interests = str_extract_all(learning_interests,
+                paste(c("statistics","specific statistical topic", 
+                        "data science", "specific data science skill", 
+                        "R programming", "tidyverse", "public health", 
+                        "specific public health topic"), collapse="|")))
 attr(self_learnerdf$learning_interests, "label") = "What specifically brought you to the case studies? (select all that apply)...31"
+attr(self_learnerdf$learning_interests, "values") =
+  list("statistics" = "interested in learning more about statistics in general",
+       "data science" = "interested in learning more about data science/data analysis in general", 
+       "public health" = "interested in learning more about public health in general",
+       "R programming" = "interested in learning more about R programming in general",
+       "tidyverse" = "interested in learning more about the tidyverse in general",
+       "specific public health topic" = "interested in a specific public health topic (such as environment, mental health, etc.)",
+       "specific data science skill" = "interested in a specific data science skill (such as how to create a dashboard, machine learning, etc.)",
+       "specific statistical topic" = "interested in a specific statistical topic (such as how to perform a paired t-test)"
+  )
 
 self_learnerdf = self_learnerdf %>% rename(famil_stats = `How familiar were you with the statistical methods presented in the case study before you read it?...32`)
+self_learnerdf %<>%
+  mutate(
+    famil_stats = case_when(
+      famil_stats == "Never heard about the statistical topics covered" ~ "1", 
+      famil_stats == "Had heard briefly about the statistical topics covered" ~ "2", 
+      famil_stats == "Had a basic understanding about the topics but not as much as the case study covered" ~ "3", 
+      famil_stats == "Regularly perform the statistical methods covered/ already had a great deal of knowledge about the topics covered" ~ "4", 
+      TRUE ~ famil_stats
+    )
+  )
 attr(self_learnerdf$famil_stats, "label") = "How familiar were you with the statistical methods presented in the case study before you read it?...32"
+attr(self_learnerdf$famil_stats, "values") = 
+  list("1" = "Never heard about the statistical topics covered",
+       "2" = "Had heard briefly about the statistical topics covered",
+       "3" = "Had a basic understanding about the topics but not as much as the case study covered",
+       "4" = "Regularly perform the statistical methods covered/ already had a great deal of knowledge about the topics covered")
 
 self_learnerdf = self_learnerdf %>% rename(famil_PH = `How familiar were you with the public health topics presented in the case study before you read it?...33`)
+self_learnerdf %<>%
+  mutate(
+    famil_PH = case_when(
+      famil_PH == "Never heard about the public health topics covered" ~ "1", 
+      famil_PH == "Had heard briefly about the topics covered" ~ "2", 
+      famil_PH == "Had a basic understanding about the topics but not as much as the case study covered"~ "3", 
+      famil_PH == "Had in depth knowledge about the topic - already knew all or most of the material covered" ~ "4", 
+      TRUE ~ famil_PH
+      )
+    )
 attr(self_learnerdf$famil_PH, "label") = "How familiar were you with the public health topics presented in the case study before you read it?...33"
+attr(self_learnerdf$famil_PH, "values") = 
+  list("1" = "Never heard about the public health topics covered",
+       "2" = "Had heard briefly about the topics covered",
+       "3" = "Had a basic understanding about the topics but not as much as the case study covered",
+       "4" = "Had in depth knowledge about the topic - already knew all or most of the material covered")
 
 self_learnerdf = self_learnerdf %>% rename(famil_DS = `How familiar were you with the data science topics presented in the case study before you read it?...34`)
+self_learnerdf %<>%
+  mutate(
+    famil_DS = case_when(
+      famil_DS == "Never heard about the data science topics covered" ~ "1", 
+      famil_DS == "Had heard briefly about the topics covered" ~ "2", 
+      famil_DS == "Had a basic understanding about the topics but not as much as the case study covered" ~ "3", 
+      famil_DS == "Had in depth knowledge about the topic - already knew all or most of the material covered" ~ "4", 
+      TRUE ~ famil_DS
+      )
+    )
 attr(self_learnerdf$famil_DS, "label") = "How familiar were you with the data science topics presented in the case study before you read it?...34"
+attr(self_learnerdf$famil_DS, "values") = 
+  list("1" = "Never heard about the data science topics covered",
+       "2" = "Had heard briefly about the topics covered",
+       "3" = "Had a basic understanding about the topics but not as much as the case study covered",
+       "4" = "Had in depth knowledge about the topic - already knew all or most of the material covered")
 
 self_learnerdf = self_learnerdf %>% rename(usefulness = `How useful did you find the case study/studies?...36`)
 attr(self_learnerdf$usefulness, "label") = "How useful did you find the case study/studies?...36"
