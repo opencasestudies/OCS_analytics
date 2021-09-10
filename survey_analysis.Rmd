@@ -515,7 +515,8 @@ studentdf %<>%
       str_extract_all(learned_new,
                 paste(c("statistics","Rstats", "import", "visualization",
                         "wrangling", "communication", "public health", 
-                        "All of the above", "None"), collapse="|")))
+                        "All of the above", "None"), collapse="|"))
+    )
 attr(studentdf$learned_new, "label") =
   "I learned something new about: (select all that apply)...21"
 attr(studentdf$learned_new, "values") = 
@@ -677,14 +678,17 @@ if(nrow(student_codebook) == ncol(student)){
 
 self_learner: 
 ```{r}
-self_learnerdf = self_learner %>% rename(learning_interests = `What specifically brought you to the case studies? (select all that apply)...31`)
+self_learnerdf = self_learner %>% 
+  rename(learning_interests = 
+           `What specifically brought you to the case studies? (select all that apply)...31`)
 self_learnerdf %<>% 
   mutate(learning_interests = str_extract_all(learning_interests,
                 paste(c("statistics","specific statistical topic", 
                         "data science", "specific data science skill", 
                         "R programming", "tidyverse", "public health", 
                         "specific public health topic"), collapse="|")))
-attr(self_learnerdf$learning_interests, "label") = "What specifically brought you to the case studies? (select all that apply)...31"
+attr(self_learnerdf$learning_interests, "label") = 
+  "What specifically brought you to the case studies? (select all that apply)...31"
 attr(self_learnerdf$learning_interests, "values") =
   list("statistics" = "interested in learning more about statistics in general",
        "data science" = "interested in learning more about data science/data analysis in general", 
@@ -696,7 +700,9 @@ attr(self_learnerdf$learning_interests, "values") =
        "specific statistical topic" = "interested in a specific statistical topic (such as how to perform a paired t-test)"
   )
 
-self_learnerdf = self_learnerdf %>% rename(famil_stats = `How familiar were you with the statistical methods presented in the case study before you read it?...32`)
+self_learnerdf = self_learnerdf %>% 
+  rename(famil_stats = 
+           `How familiar were you with the statistical methods presented in the case study before you read it?...32`)
 self_learnerdf %<>%
   mutate(
     famil_stats = case_when(
@@ -707,14 +713,17 @@ self_learnerdf %<>%
       TRUE ~ famil_stats
     )
   )
-attr(self_learnerdf$famil_stats, "label") = "How familiar were you with the statistical methods presented in the case study before you read it?...32"
+attr(self_learnerdf$famil_stats, "label") = 
+  "How familiar were you with the statistical methods presented in the case study before you read it?...32"
 attr(self_learnerdf$famil_stats, "values") = 
   list("1" = "Never heard about the statistical topics covered",
        "2" = "Had heard briefly about the statistical topics covered",
        "3" = "Had a basic understanding about the topics but not as much as the case study covered",
        "4" = "Regularly perform the statistical methods covered/ already had a great deal of knowledge about the topics covered")
 
-self_learnerdf = self_learnerdf %>% rename(famil_PH = `How familiar were you with the public health topics presented in the case study before you read it?...33`)
+self_learnerdf = self_learnerdf %>% 
+  rename(famil_PH = 
+           `How familiar were you with the public health topics presented in the case study before you read it?...33`)
 self_learnerdf %<>%
   mutate(
     famil_PH = case_when(
@@ -725,14 +734,17 @@ self_learnerdf %<>%
       TRUE ~ famil_PH
       )
     )
-attr(self_learnerdf$famil_PH, "label") = "How familiar were you with the public health topics presented in the case study before you read it?...33"
+attr(self_learnerdf$famil_PH, "label") = 
+  "How familiar were you with the public health topics presented in the case study before you read it?...33"
 attr(self_learnerdf$famil_PH, "values") = 
   list("1" = "Never heard about the public health topics covered",
        "2" = "Had heard briefly about the topics covered",
        "3" = "Had a basic understanding about the topics but not as much as the case study covered",
        "4" = "Had in depth knowledge about the topic - already knew all or most of the material covered")
 
-self_learnerdf = self_learnerdf %>% rename(famil_DS = `How familiar were you with the data science topics presented in the case study before you read it?...34`)
+self_learnerdf = self_learnerdf %>% 
+  rename(famil_DS = 
+           `How familiar were you with the data science topics presented in the case study before you read it?...34`)
 self_learnerdf %<>%
   mutate(
     famil_DS = case_when(
@@ -743,59 +755,148 @@ self_learnerdf %<>%
       TRUE ~ famil_DS
       )
     )
-attr(self_learnerdf$famil_DS, "label") = "How familiar were you with the data science topics presented in the case study before you read it?...34"
+attr(self_learnerdf$famil_DS, "label") = 
+  "How familiar were you with the data science topics presented in the case study before you read it?...34"
 attr(self_learnerdf$famil_DS, "values") = 
   list("1" = "Never heard about the data science topics covered",
        "2" = "Had heard briefly about the topics covered",
        "3" = "Had a basic understanding about the topics but not as much as the case study covered",
        "4" = "Had in depth knowledge about the topic - already knew all or most of the material covered")
 
-self_learnerdf = self_learnerdf %>% rename(usefulness = `How useful did you find the case study/studies?...36`)
-attr(self_learnerdf$usefulness, "label") = "How useful did you find the case study/studies?...36"
+self_learnerdf = self_learnerdf %>% 
+  rename(usefulness = 
+           `How useful did you find the case study/studies?...36`)
+attr(self_learnerdf$usefulness, "label") = 
+  "How useful did you find the case study/studies?...36"
 
-self_learnerdf = self_learnerdf %>% rename(refer_back = `How likely are you to refer back to the case study/studies in the future?...37`)
-attr(self_learnerdf$refer_back, "label") = "How likely are you to refer back to the case study/studies in the future?...37"
+self_learnerdf = self_learnerdf %>% 
+  rename(refer_back = 
+           `How likely are you to refer back to the case study/studies in the future?...37`)
+attr(self_learnerdf$refer_back, "label") = 
+  "How likely are you to refer back to the case study/studies in the future?...37"
 
-self_learnerdf = self_learnerdf %>% rename(recommend = `How likely are you to recommend the case studies to others?...38`)
-attr(self_learnerdf$recommend, "label") = "How likely are you to recommend the case studies to others?...38"
+self_learnerdf = self_learnerdf %>% 
+  rename(recommend = 
+           `How likely are you to recommend the case studies to others?...38`)
+attr(self_learnerdf$recommend, "label") = 
+  "How likely are you to recommend the case studies to others?...38"
 
-self_learnerdf = self_learnerdf %>% rename(feedback1 = `Please provide any feedback you might have....41`)
-attr(self_learnerdf$feedback1, "label") = "Please provide any feedback you might have....41"
+self_learnerdf = self_learnerdf %>% 
+  rename(feedback1 = 
+           `Please provide any feedback you might have....41`)
+attr(self_learnerdf$feedback1, "label") = 
+  "Please provide any feedback you might have....41"
 
-self_learnerdf = self_learnerdf %>% rename(learned_new = `I learned something new about: (select all that apply)...43`)
-attr(self_learnerdf$learned_new, "label") = "I learned something new about: (select all that apply)...43"
+self_learnerdf = self_learnerdf %>% 
+  rename(learned_new = 
+           `I learned something new about: (select all that apply)...43`)
+self_learnerdf %<>%
+  mutate(
+    learned_new = str_replace_all(learned_new, "How to implement a statistical method using R", "Rstats"),
+    learned_new = str_replace_all(learned_new, "A statistical method or concept", "statistics")
+  ) %>%
+  mutate(
+    learned_new = 
+      str_extract_all(learned_new,
+                paste(c("statistics","Rstats", "import", "visualization",
+                        "wrangling", "communication", "public health", 
+                        "All of the above", "None"), collapse="|"))
+    )
+attr(self_learnerdf$learned_new, "label") = 
+  "I learned something new about: (select all that apply)...43"
+attr(self_learnerdf$learned_new, "values") = 
+  list("statistics" = "A statistical method or concept",
+       "Rstats" = "How to implement a statistical method using R",
+       "import" = "Data import methods", 
+       "visualization" = "Data visualization methods",
+       "wrangling" = "Data wrangling methods",
+       "communication" = "Data communication methods",
+       "public health" = "The public health topics presented")
 
-self_learnerdf = self_learnerdf %>% rename(enjoyment = `How enjoyable did you find the case study/studies as a way to learn about these topics?...49`)
-attr(self_learnerdf$enjoyment, "label") = "How enjoyable did you find the case study/studies as a way to learn about these topics?...49"
+self_learnerdf = self_learnerdf %>% 
+  rename(enjoyment = 
+           `How enjoyable did you find the case study/studies as a way to learn about these topics?...49`)
+attr(self_learnerdf$enjoyment, "label") = 
+  "How enjoyable did you find the case study/studies as a way to learn about these topics?...49"
 
-self_learnerdf = self_learnerdf %>% rename(data_access = `Were you able to locate, access, and download files from the case study repository with relative ease?`)
-attr(self_learnerdf$data_access, "label") = "Were you able to locate, access, and download files from the case study repository with relative ease?"
+self_learnerdf = self_learnerdf %>% 
+  rename(data_access = 
+           `Were you able to locate, access, and download files from the case study repository with relative ease?`)
+self_learnerdf %<>% 
+  mutate(
+    data_access = case_when(
+      data_access == "Yes, I found the files I needed with no issue" ~ "Yes",
+      data_access == "I found the files but had some difficulty" ~ "some difficulty",
+      data_access == "No, I could not find the files I needed" ~ "No",
+      TRUE ~ data_access
+    )
+  )
+attr(self_learnerdf$data_access, "label") = 
+  "Were you able to locate, access, and download files from the case study repository with relative ease?"
+attr(self_learnerdf$data_access, "values") = 
+  list("Yes" = "Yes, I found the files I needed with no issue",
+       "some difficulty" = "I found the files but had some difficulty",
+       "No" = "No, I could not find the files I needed")
 
-self_learnerdf = self_learnerdf %>% rename(case_studies = `What case study(ies) have you looked at?  (select all that apply)...62`)
-attr(self_learnerdf$case_studies, "label") = "What case study(ies) have you looked at?  (select all that apply)...62"
+self_learnerdf = self_learnerdf %>% 
+  rename(case_studies = 
+           `What case study(ies) have you looked at?  (select all that apply)...62`)
+self_learnerdf %<>%
+  mutate(
+    case_studies = str_extract_all(case_studies,
+                    paste(c("obesity:", "diet:", "school shootings", 
+                            "multicollinearity and RTC laws \\(wrangling\\)",
+                            "multicollinearity and RTC laws \\(analysis\\)",
+                            "predicting air pollution", "CO2 emissions",
+                            "youth disconnection", "youth mental health", 
+                            "opioid shipments in the US", "None",
+                            "vaping behaviours among US youths"), collapse = "|")),
+    case_studies = str_remove_all(case_studies, ":")
+  )
+attr(self_learnerdf$case_studies, "label") = 
+  "What case study(ies) have you looked at?  (select all that apply)...62"
 
-self_learnerdf = self_learnerdf %>% rename(over18 = `Are you 18 or over? You cannot participate in this survey if you are under 18.`)
-attr(self_learnerdf$over18, "label") = "Are you 18 or over? You cannot participate in this survey if you are under 18."
+self_learnerdf = self_learnerdf %>% 
+  rename(over18 = 
+           `Are you 18 or over? You cannot participate in this survey if you are under 18.`)
+attr(self_learnerdf$over18, "label") = 
+  "Are you 18 or over? You cannot participate in this survey if you are under 18."
 
-self_learnerdf = self_learnerdf %>% rename(seen_casestudy = `If you have not seen a case study yet, select "Not yet" , otherwise select "Yes" to answer questions about a case study you have seen....71`)
-attr(self_learnerdf$seen_casestudy, "label") = 'If you have not seen a case study yet, select "Not yet" , otherwise select "Yes" to answer questions about a case study you have seen....71'
+self_learnerdf = self_learnerdf %>% 
+  rename(seen_casestudy = 
+           `If you have not seen a case study yet, select "Not yet" , otherwise select "Yes" to answer questions about a case study you have seen....71`)
+attr(self_learnerdf$seen_casestudy, "label") = 
+  'If you have not seen a case study yet, select "Not yet" , otherwise select "Yes" to answer questions about a case study you have seen....71'
 
-self_learnerdf = self_learnerdf %>% rename(feedback2 = `Please provide any feedback you might have....72`)
-attr(self_learnerdf$feedback2, "label") = "Please provide any feedback you might have....72"
+self_learnerdf = self_learnerdf %>% 
+  rename(feedback2 = 
+           `Please provide any feedback you might have....72`)
+attr(self_learnerdf$feedback2, "label") = 
+  "Please provide any feedback you might have....72"
 
-self_learnerdf = self_learnerdf %>% rename(field_of_work = `What field do you work in? (we would like to know more about who is interested in our case studies - you are not required to answer)...73`)
-attr(self_learnerdf$field_of_work, "label") = "What field do you work in? (we would like to know more about who is interested in our case studies - you are not required to answer)...73"
+self_learnerdf = self_learnerdf %>% 
+  rename(field_of_work = 
+           `What field do you work in? (we would like to know more about who is interested in our case studies - you are not required to answer)...73`)
+attr(self_learnerdf$field_of_work, "label") = 
+  "What field do you work in? (we would like to know more about who is interested in our case studies - you are not required to answer)...73"
 
-self_learnerdf = self_learnerdf %>% rename(famil_R = `How familiar were you with R programming before you read the case study?...88`)
-attr(self_learnerdf$famil_R, "label") = "How familiar were you with R programming before you read the case study?...88"
+self_learnerdf = self_learnerdf %>% 
+  rename(famil_R = 
+           `How familiar were you with R programming before you read the case study?...88`)
+attr(self_learnerdf$famil_R, "label") = 
+  "How familiar were you with R programming before you read the case study?...88"
 
-self_learnerdf = self_learnerdf %>% rename(famil_tidyverse = `How familiar were you with the tidyverse programming material presented in the case study before you read it?...89`)
-attr(self_learnerdf$famil_tidyverse, "label") = "How familiar were you with the tidyverse programming material presented in the case study before you read it?...89"
+self_learnerdf = self_learnerdf %>% 
+  rename(famil_tidyverse = 
+           `How familiar were you with the tidyverse programming material presented in the case study before you read it?...89`)
+attr(self_learnerdf$famil_tidyverse, "label") = 
+  "How familiar were you with the tidyverse programming material presented in the case study before you read it?...89"
 
-self_learnerdf = self_learnerdf %>% rename(famil_nonR = `Do you have familiarity with another programming language besides R?...90`)
-attr(self_learnerdf$famil_nonR, "label") = "Do you have familiarity with another programming language besides R?...90"
-
-
+self_learnerdf = self_learnerdf %>% 
+  rename(famil_nonR = 
+           `Do you have familiarity with another programming language besides R?...90`)
+attr(self_learnerdf$famil_nonR, "label") = 
+  "Do you have familiarity with another programming language besides R?...90"
 ```
 
 checking for missed questions; if no missed questions, display the data frame
