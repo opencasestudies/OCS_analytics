@@ -95,7 +95,7 @@ educatordf = educatordf %>%
   rename(teaching_interests = 
            `What specifically brought you to the case studies? (select all that apply)...26`)
 educatordf %<>% mutate(teaching_interests = str_extract_all(teaching_interests,
-                paste(c("statistics","specific statistical topic", 
+                paste(c("statistics", "specific statistical topic", 
                         "data science", "specific data science skill", 
                         "R programming", "tidyverse", "public health", 
                         "specific public health topic"), collapse="|")))
@@ -121,6 +121,37 @@ attr(educatordf$teaching_interests, "values") =
   "specific public health topic" = 
     "Interested in teaching about a specific public health topic (such as mental health, obesity etc.)"
       )
+
+# seperating teaching_interests into boolean columns
+
+educatordf %<>%
+  mutate(
+    teach_stats = case_when(
+      grepl("statistics", teaching_interests) == TRUE ~ 1,
+      TRUE ~ 0),
+    teach_spfc_stats = case_when(
+      grepl("specific statistical topic", teaching_interests) == TRUE ~ 1, 
+      TRUE ~ 0),
+    teach_ds = case_when(
+      grepl("data science", teaching_interests) == TRUE ~ 1, 
+      TRUE ~ 0),
+    teach_spfc_ds = case_when(
+      grepl("specific data science skill", teaching_interests) == TRUE ~ 1,
+      TRUE ~ 0),
+    teach_R = case_when(
+      grepl("R programming", teaching_interests) == TRUE ~ 1, 
+      TRUE ~ 0),
+    teach_tidyverse = case_when(
+      grepl("tidyverse", teaching_interests) == TRUE ~ 1,
+      TRUE ~ 0),
+    teach_PH = case_when(
+      grepl("public health", teaching_interests) == TRUE ~ 1,
+      TRUE ~ 0),
+    teach_spfc_PH = case_when(
+      grepl("specific public health topic", teaching_interests) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(teach_stats, teach_spfc_stats, teach_ds, teach_spfc_ds,
+                 teach_R, teach_tidyverse, teach_PH, teach_spfc_PH, .after = teaching_interests)
 
 educatordf = educatordf %>% 
   rename(might_teach = 
