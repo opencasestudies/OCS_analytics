@@ -123,6 +123,11 @@ attr(educatordf$teaching_interests, "values") =
       )
 
 # seperating teaching_interests into boolean columns
+# almost working but slight problem:
+# responses with "specific public health topic" will show TRUE in both the 
+# teach_PH and teach_spfc_PH columns, even if the respondent did not have 
+# "public health" in general as an answer
+# same issue will occur with teach_ds and teach_spfc_ds
 
 educatordf %<>%
   mutate(
