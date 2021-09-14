@@ -19,7 +19,7 @@ yesterday = Sys.Date() - 1
 ses_wk_ctg = google_analytics(ocs_property_id,
           date_range = c("2021-01-01", yesterday),
           metrics = c("sessions"),
-          dimensions = c("week", "deviceCategory"))
+          dimensions = c("day", "deviceCategory"))
 head(ses_wk_ctg)
 ```
 
@@ -45,9 +45,11 @@ user_sources = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("newUsers"),
           dimensions = c("firstUserSource")) %>%
-  subset(grepl("127",firstUserSource) == FALSE)
+  subset(grepl("127",firstUserSource) == FALSE) %>% 
+  mutate(firstUserSource = as_factor(firstUserSource),
+         firstUserSource = fct_infreq(firstUserSource))
 
-ggplot(user_sources, aes(x = as.factor(firstUserSource), y = newUsers)) +
+ggplot(user_sources, aes(x = firstUserSource, y = newUsers)) +
   geom_bar(stat = "identity") +   theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 ```
 (t.co = twitter)
@@ -72,6 +74,21 @@ pivot_longer(users_wk, c(totalUsers, newUsers, active7DayUsers),
   ggplot(aes(x = week, y = count)) +
   geom_line(aes(color = metric))
 ```
+```{r}
+users_date = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("totalUsers", "newUsers", "eventCount",
+                      "active7DayUsers", "userEngagementDuration"),
+          dimensions = c("date"), limit = 400) %>% 
+  mutate(
+         avgEngagementDuration = # avg engagement in minutes
+           round(userEngagementDuration/(60*totalUsers)))
+
+pivot_longer(users_date, c(totalUsers, newUsers, active7DayUsers), 
+             names_to = "metric", values_to = "count") %>%
+  ggplot(aes(x = date, y = count)) +
+  geom_line(aes(color = metric))
+```
 
 ```{r}
 ggplot(users_wk, aes(avgEngagementDuration)) + 
@@ -94,12 +111,50 @@ userEngagementDuration: The total amount of time (in seconds) your website or ap
 cities = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("newUsers"),
-          dimensions = c("city"))
+          dimensions = c("cityId", "city"), limit = 1000)
 cities
 ```
 
 city: The city from which the user activity originated.
 
 
+dimensions of interest:
+- browser
+- cohort
+- country/countryID
+- dateHourMinute
+- firstSessionDate
+- fileName
+- firstUserMedium 
+- firstUserTrafficOrigin
+- fullPageUrl
+- hour, minute
+- language, languageCode
+- linkClasses, linkDomain, linkUrl
+- medium, method
+- operatingSystem, operatingSystemWithVersion
+- pageLocation, pageReferrer
+- pageTitle
+- percentScrolled
+- searchTerm
+- streamName
+- sessionSource, source, sessionMedium
+
+metrics of interest: 
+- active1DayUsers
+- conversions
+- engagedSessions, engagementRate
+- screenPageViews
+- sessions, sessionsPerUser
+- 
+
+for users data: use active1Dayusers and newUsers
+ 
 cool figure to make: # of events (or users) per day (events y axis, days x axis)
 have a timeline of project development along the x-axis to view if website traffic was changed at all by project developments. 
+
+
+helpful links: 
+https://www.dase-analytics.com/blog/en/how-to-get-data-from-google-analytics-using-r-programming/
+
+https://ga-dev-tools.web.app/dimensions-metrics-explorer/

@@ -138,7 +138,7 @@ educatordf %<>%
       grepl("specific statistical topic", teaching_interests) == TRUE ~ 1, 
       TRUE ~ 0),
     teach_ds = case_when(
-      grepl("data science", teaching_interests) == TRUE ~ 1, 
+      grepl('"data science"', teaching_interests) == TRUE ~ 1, 
       TRUE ~ 0),
     teach_spfc_ds = case_when(
       grepl("specific data science skill", teaching_interests) == TRUE ~ 1,
@@ -150,7 +150,7 @@ educatordf %<>%
       grepl("tidyverse", teaching_interests) == TRUE ~ 1,
       TRUE ~ 0),
     teach_PH = case_when(
-      grepl("public health", teaching_interests) == TRUE ~ 1,
+      grepl('"public health"', teaching_interests) == TRUE ~ 1,
       TRUE ~ 0),
     teach_spfc_PH = case_when(
       grepl("specific public health topic", teaching_interests) == TRUE ~ 1,
@@ -169,6 +169,9 @@ educatordf = educatordf %>%
            `What type of students do you teach? (select all that apply)`)
 attr(educatordf$type_student_taught, "label") = 
   "What type of students do you teach? (select all that apply)"
+
+# educatordf %>%
+#   separate(type_student_taught, into = c("teach_grad","teach_ugrad", "teach_HS"), sep = ",")
 
 educatordf = educatordf %>% 
   rename(course_type = 
