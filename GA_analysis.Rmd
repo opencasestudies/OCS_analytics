@@ -11,15 +11,34 @@ library(googleAnalyticsR)
 ```
 
 ```{r}
-# ocsmeta = ga_meta("data", propertyId = 256923228)
+
 ocs_property_id = 256923228
-basic = ga_data(
-  ocs_property_id,
-  metrics = c("sessions", "newUsers", "totalUsers", "userEngagementDuration"),
-  date_range = c("2021-01-01", "2021-08-15")
-)
-basic
+yesterday = Sys.Date() - 1
+ses_wk_ctg = google_analytics(ocs_property_id,
+          date_range = c("2021-01-01", yesterday),
+          metrics = c("sessions"),
+          dimensions = c("week", "deviceCategory"))
+head(ses_wk_ctg)
 ```
+
+```{r}
+# ocsmeta = ga_meta("data", propertyId = 256923228)
+ses_wk_ctg = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("week", "deviceCategory"))
+ses_wk_ctg
+```
+
+```{r}
+users_wk = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("totalUsers", "newUsers", "eventCount",
+                      "active7DayUsers"),
+          dimensions = c("week"))
+users_wk
+```
+
 
 what does time elapsed in google analytics mean? 
 time the page is open on the laptop? or time spent actively engaging with the page? 
