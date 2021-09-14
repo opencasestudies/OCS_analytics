@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(googleAnalyticsR)
+library(ggplot2)
+library(tidyverse)
 ```
 
 ```{r}
@@ -26,22 +28,78 @@ head(ses_wk_ctg)
 ses_wk_ctg = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("week", "deviceCategory"))
-ses_wk_ctg
+          dimensions = c("deviceCategory"))
+
+ggplot(ses_wk_ctg, aes(x = as.factor(deviceCategory), y = sessions)) +
+  geom_bar(stat = "identity")
 ```
+[Paramaters:](https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema)
+
+sessions: The number of sessions that began on your site or app (event triggered: session_start).
+
+deviceCategory: The type of device: Desktop, Tablet, or Mobile.
+
+
+```{r}
+user_sources = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("newUsers"),
+          dimensions = c("firstUserSource")) %>%
+  subset(grepl("127",firstUserSource) == FALSE)
+
+ggplot(user_sources, aes(x = as.factor(firstUserSource), y = newUsers)) +
+  geom_bar(stat = "identity") +   theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+```
+(t.co = twitter)
+
+firstUserSource = The source that first acquired the user to your website or app.
+
+newUsers: The number of users who interacted with your site or launched your app for the first time (event triggered: first_open or first_visit).
+
 
 ```{r}
 users_wk = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("totalUsers", "newUsers", "eventCount",
-                      "active7DayUsers"),
-          dimensions = c("week"))
-users_wk
+                      "active7DayUsers", "userEngagementDuration"),
+          dimensions = c("week")) %>% 
+  mutate(week = as.numeric(week),
+         avgEngagementDuration = # avg engagement in minutes
+           round(userEngagementDuration/(60*totalUsers)))
+
+pivot_longer(users_wk, c(totalUsers, newUsers, active7DayUsers), 
+             names_to = "metric", values_to = "count") %>%
+  ggplot(aes(x = week, y = count)) +
+  geom_line(aes(color = metric))
+```
+
+```{r}
+ggplot(users_wk, aes(avgEngagementDuration)) + 
+  geom_bar()
 ```
 
 
-what does time elapsed in google analytics mean? 
-time the page is open on the laptop? or time spent actively engaging with the page? 
+week: The week of the event, a two-digit number from 01 to 53. Each week starts on Sunday. January 1st is always in week 01. The first and last week of the year have fewer than 7 days in most years. Weeks other than the first and the last week of the year always have 7 days. For years where January 1st is a Sunday, the first week of that year and the last week of the prior year have 7 days.
+
+totalUsers: The number of distinct users who have logged at least one event, regardless of whether the site or app was in use when that event was logged.
+
+eventCount: The count of events.
+
+active7DayUsers: The number of distinct active users on your site or app within a 7 day period. The 7 day period includes the last day in the report's date range.
+
+userEngagementDuration: The total amount of time (in seconds) your website or app was in the foreground of users' devices. 
+
+
+```{r}
+cities = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("newUsers"),
+          dimensions = c("city"))
+cities
+```
+
+city: The city from which the user activity originated.
+
 
 cool figure to make: # of events (or users) per day (events y axis, days x axis)
 have a timeline of project development along the x-axis to view if website traffic was changed at all by project developments. 
