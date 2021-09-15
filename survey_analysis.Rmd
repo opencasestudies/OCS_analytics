@@ -123,11 +123,6 @@ attr(educatordf$teaching_interests, "values") =
       )
 
 # seperating teaching_interests into boolean columns
-# almost working but slight problem:
-# responses with "specific public health topic" will show TRUE in both the 
-# teach_PH and teach_spfc_PH columns, even if the respondent did not have 
-# "public health" in general as an answer
-# same issue will occur with teach_ds and teach_spfc_ds
 
 educatordf %<>%
   mutate(
@@ -156,7 +151,8 @@ educatordf %<>%
       grepl("specific public health topic", teaching_interests) == TRUE ~ 1,
       TRUE ~ 0)
   ) %>% relocate(teach_stats, teach_spfc_stats, teach_ds, teach_spfc_ds,
-                 teach_R, teach_tidyverse, teach_PH, teach_spfc_PH, .after = teaching_interests)
+                 teach_R, teach_tidyverse, teach_PH, teach_spfc_PH, 
+                 .after = teaching_interests)
 
 educatordf = educatordf %>% 
   rename(might_teach = 
@@ -170,14 +166,49 @@ educatordf = educatordf %>%
 attr(educatordf$type_student_taught, "label") = 
   "What type of students do you teach? (select all that apply)"
 
-# educatordf %>%
-#   separate(type_student_taught, into = c("teach_grad","teach_ugrad", "teach_HS"), sep = ",")
+# seperating type_student_taught into boolean columns
+
+educatordf %<>%
+  mutate(
+    teach_grad = case_when(
+      grepl("Graduate students", type_student_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    teach_ugrad = case_when(
+      grepl("Undergraduate students", type_student_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    teach_HS = case_when(
+      grepl("High school students", type_student_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    teach_middle = case_when(
+      grepl("Middle school students", type_student_taught) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(teach_grad, teach_ugrad, teach_HS, teach_middle, 
+                 .after = type_student_taught) 
 
 educatordf = educatordf %>% 
   rename(course_type = 
            `What type of course(s) would you (or have you) used our case studies for? (check all that apply)`)
 attr(educatordf$course_type, "label") = 
   "What type of course(s) would you (or have you) used our case studies for? (check all that apply)"
+
+# seperating course_type into boolean columns
+
+educatordf %<>%
+  mutate(
+    would_use_PH_course = case_when(
+      grepl("Public Health", course_type) == TRUE ~ 1,
+      TRUE ~ 0),
+    would_use_stats_course = case_when(
+      grepl("Statistics", course_type) == TRUE ~ 1,
+      TRUE ~ 0),
+    would_use_math_course = case_when(
+      grepl("Math", course_type) == TRUE ~ 1,
+      TRUE ~ 0),
+    would_use_DS_course = case_when(
+      grepl("Data Science", course_type) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(would_use_PH_course, would_use_stats_course, would_use_math_course, 
+                 would_use_DS_course, .after = course_type) 
 
 educatordf = educatordf %>% 
   rename(case_studies = 
