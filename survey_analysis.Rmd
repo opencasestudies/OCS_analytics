@@ -228,6 +228,55 @@ educatordf %<>%
 attr(educatordf$case_studies, "label") = 
   "What case study(ies) have you looked at?  (select all that apply)...53"
 
+# seperating case studies into boolean columns
+
+educatordf %<>%
+  mutate(
+    looked_at_obesity = case_when(
+      grepl("obesity", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_diet = case_when(
+      grepl("diet", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_school_shootings = case_when(
+      grepl("school shootings", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_RTC_wrangling = case_when(
+      grepl("multicollinearity and RTC laws (wrangling)", case_studies, 
+            fixed = TRUE) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_RTC_analysis = case_when(
+      grepl("multicollinearity and RTC laws (analysis)", case_studies, 
+            fixed = TRUE) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_air_pollution = case_when(
+      grepl("predicting air pollution", case_studies) == TRUE ~ 1, 
+      TRUE ~ 0),
+    looked_at_co2_emissions = case_when(
+      grepl("CO2 emissions", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_youth_disconnection = case_when(
+      grepl("youth disconnection", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_mental_health = case_when(
+      grepl("youth mental health", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_opioids = case_when(
+      grepl("opioid shipments in the US", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_vaping = case_when(
+      grepl("vaping behaviours among US youths", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_none = case_when(
+      grepl("None", case_studies) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(looked_at_obesity, looked_at_diet, looked_at_school_shootings, 
+                 looked_at_RTC_wrangling, looked_at_RTC_analysis, 
+                 looked_at_air_pollution, looked_at_co2_emissions,
+                 looked_at_youth_disconnection, looked_at_mental_health,
+                 looked_at_opioids, looked_at_vaping, looked_at_none,
+                 .after = case_studies) 
+
 educatordf = educatordf %>% 
   rename(ocs_interest = 
            `Which case study or case studies might you be interested  in using. (select all that apply)`)
@@ -235,6 +284,58 @@ educatordf %<>%
   mutate(ocs_interest = gsub(": .*", "", str_remove(ocs_interest, "Case study about ")))
 attr(educatordf$ocs_interest, "label") = 
   "Which case study or case studies might you be interested in using. (select all that apply)"
+
+# separating ocs_interest into boolean columns
+
+educatordf %<>%
+  mutate(
+    might_use_obesity = case_when(
+      grepl("obesity", ocs_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_diet = case_when(
+      grepl("diet", ocs_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_school_shootings = case_when(
+      grepl("school shootings", ocs_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_RTC_wrangling = case_when(
+      grepl("multicollinearity and RTC laws (wrangling)", ocs_interest, 
+            fixed = TRUE) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_RTC_analysis = case_when(
+      grepl("multicollinearity and RTC laws (analysis)", ocs_interest, 
+            fixed = TRUE) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_air_pollution = case_when(
+      grepl("predicting air pollution", ocs_interest) == TRUE ~ 1, 
+      TRUE ~ 0),
+    might_use_co2_emissions = case_when(
+      grepl("CO2 emissions", ocs_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_youth_disconnection = case_when(
+      grepl("youth disconnection", ocs_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_mental_health = case_when(
+      grepl("youth mental health", ocs_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_opioids = case_when(
+      grepl("opioid shipments in the US", ocs_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_vaping = case_when(
+      grepl("vaping behaviours among US youths", ocs_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_none = case_when(
+      grepl("None", ocs_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    might_use_not_sure = case_when(
+      grepl("Not sure yet", ocs_interest) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(might_use_obesity, might_use_diet, might_use_school_shootings, 
+                 might_use_RTC_wrangling, might_use_RTC_analysis, 
+                 might_use_air_pollution, might_use_co2_emissions,
+                 might_use_youth_disconnection, might_use_mental_health,
+                 might_use_opioids, might_use_vaping, might_use_none,
+                 might_use_not_sure, .after = ocs_interest)
 
 educatordf = educatordf %>% 
   rename(over18 = 
@@ -265,6 +366,8 @@ attr(educatordf$parts_used, "values") =
        "Part" = "Only part of a case study (or case studies)",
        "Full" = "Full case study (or case studies)",
        "Combination" = "Depends (sometimes just data, sometimes part or all of a case study)")
+
+
 
 educatordf = educatordf %>% 
   rename(materials_used = 
