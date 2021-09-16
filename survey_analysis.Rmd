@@ -856,6 +856,7 @@ studentdf %<>%
                         "wrangling", "communication", "public health", 
                         "All of the above", "None"), collapse="|"))
     )
+
 attr(studentdf$learned_new, "label") =
   "I learned something new about: (select all that apply)...21"
 attr(studentdf$learned_new, "values") = 
@@ -866,6 +867,8 @@ attr(studentdf$learned_new, "values") =
        "wrangling" = "Data wrangling methods",
        "communication" = "Data communication methods",
        "public health" = "The public health topics presented")
+
+# separating learned_new into boolean columns 
 
 studentdf = studentdf %>%
   rename(how_found = 
