@@ -367,13 +367,62 @@ attr(educatordf$parts_used, "values") =
        "Full" = "Full case study (or case studies)",
        "Combination" = "Depends (sometimes just data, sometimes part or all of a case study)")
 
+# separating parts_used into boolean columns
 
+educatordf %<>%
+  mutate(
+    interest_data = case_when(
+      parts_used == "Data" ~ 1,
+      TRUE ~ 0),
+    interest_part = case_when(
+      parts_used == "Part" ~ 1,
+      TRUE ~ 0),
+    interest_full = case_when(
+      parts_used == "Full" ~ 1, 
+      TRUE ~ 0),
+    interest_combination = case_when(
+      parts_used == "Combination" ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(interest_data, interest_part, interest_full,
+                 interest_combination, .after = parts_used)
 
 educatordf = educatordf %>% 
-  rename(materials_used = 
+  rename(materials_interest = 
            `Please tell us which materials you are most interested in using (or you already used to teach). (select all that apply)`)
-attr(educatordf$materials_used, "label") = 
+attr(educatordf$materials_interest, "label") = 
   "Please tell us which materials you are most interested in using (or you already used to teach). (select all that apply)"
+
+# separating materials_interest into boolean columns
+
+educatordf %<>%
+  mutate(
+    motivation_interest = case_when(
+      grepl("Motivation/Context", materials_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    import_interest = case_when(
+      grepl("Data Import", materials_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    wrangling_interest = case_when(
+      grepl("Data Wrangling", materials_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    exploration_interest = case_when(
+      grepl("Data Exploration", materials_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    visualization_interest = case_when(
+      grepl("Data Visualization", materials_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    analysis_interest = case_when(
+      grepl("Data Analysis", materials_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    data_interest = case_when(
+      grepl("The data itself", materials_interest) == TRUE ~ 1,
+      TRUE ~ 0),
+    all_interest = case_when(
+      grepl("All sections", materials_interest) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(motivation_interest, import_interest, wrangling_interest, 
+                 exploration_interest, visualization_interest, analysis_interest,
+                 data_interest, all_interest, .after = materials_interest)
 
 educatordf = educatordf %>% 
   rename(data_access1 = 
@@ -394,6 +443,58 @@ educatordf %<>%
   mutate(ocs_taught = gsub(": .*", "", str_remove(ocs_taught, "Case study about ")))
 attr(educatordf$ocs_taught, "label") = 
   "Which case studies (or data from a case study) did you use? (select all that apply)"
+
+# separate ocs_taught into boolean columns
+
+educatordf %<>%
+  mutate(
+    used_obesity = case_when(
+      grepl("obesity", ocs_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_diet = case_when(
+      grepl("diet", ocs_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_school_shootings = case_when(
+      grepl("school shootings", ocs_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_RTC_wrangling = case_when(
+      grepl("multicollinearity and RTC laws (wrangling)", ocs_taught, 
+            fixed = TRUE) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_RTC_analysis = case_when(
+      grepl("multicollinearity and RTC laws (analysis)", ocs_taught, 
+            fixed = TRUE) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_air_pollution = case_when(
+      grepl("predicting air pollution", ocs_taught) == TRUE ~ 1, 
+      TRUE ~ 0),
+    used_co2_emissions = case_when(
+      grepl("CO2 emissions", ocs_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_youth_disconnection = case_when(
+      grepl("youth disconnection", ocs_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_mental_health = case_when(
+      grepl("youth mental health", ocs_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_opioids = case_when(
+      grepl("opioid shipments in the US", ocs_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_vaping = case_when(
+      grepl("vaping behaviours among US youths", ocs_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_none = case_when(
+      grepl("None", ocs_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    used_not_sure = case_when(
+      grepl("Not sure yet", ocs_taught) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(used_obesity, used_diet, used_school_shootings, 
+                 used_RTC_wrangling, used_RTC_analysis, 
+                 used_air_pollution, used_co2_emissions,
+                 used_youth_disconnection, used_mental_health,
+                 used_opioids, used_vaping, used_none,
+                 used_not_sure, .after = ocs_taught)
 
 educatordf = educatordf %>% 
   rename(courses_taught = 
