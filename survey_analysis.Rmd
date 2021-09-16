@@ -502,6 +502,25 @@ educatordf = educatordf %>%
 attr(educatordf$courses_taught, "label") = 
   "What type of course(s) did you use our case studies or data for? (check all that apply)"
 
+# separating courses_taught into boolean columns 
+
+educatordf %<>%
+  mutate(
+    taught_PH_course = case_when(
+      grepl("Public Health", courses_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    taught_stats_course = case_when(
+      grepl("Statistics", courses_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    taught_math_course = case_when(
+      grepl("Math", courses_taught) == TRUE ~ 1,
+      TRUE ~ 0),
+    taught_DS_course = case_when(
+      grepl("Data Science", courses_taught) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(taught_PH_course, taught_stats_course, taught_math_course, 
+                 taught_DS_course, .after = courses_taught) 
+
 educatordf = educatordf %>% 
   rename(data_access2 = 
            `Was it clear how to locate, access, and download files from a case study repository?`)
@@ -575,6 +594,25 @@ attr(educatordf$parts_taught, "values") =
        "Full" = "Full case study",
        "Combination" = "Combination (sometimes just the data or part of the case study... etc.)")
 
+# separating parts_taught into boolean columns
+
+educatordf %<>%
+  mutate(
+    taught_data = case_when(
+      parts_taught == "Data" ~ 1,
+      TRUE ~ 0),
+    taught_part = case_when(
+      parts_taught == "Part" ~ 1,
+      TRUE ~ 0),
+    taught_full = case_when(
+      parts_taught == "Full" ~ 1, 
+      TRUE ~ 0),
+    taught_combination = case_when(
+      parts_taught == "Combination" ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(taught_data, taught_part, taught_full,
+                 taught_combination, .after = parts_taught)
+
 educatordf = educatordf %>% 
   rename(modular_clarity = 
            `Was it clear how to use just part of the case study in a modular way?`)
@@ -586,6 +624,29 @@ educatordf = educatordf %>%
            `Which sections were most helpful for you? (select all that apply)`)
 attr(educatordf$helpful_sections, "label") = 
   "Which sections were most helpful for you? (select all that apply)"
+
+# separating helpful_sections into boolean columns
+
+educatordf %<>%
+  mutate(
+    motivation_helpful = case_when(
+      grepl("Motivation/Context/What are the data?", helpful_sections) == TRUE ~ 1,
+      TRUE ~ 0),
+    import_helpful = case_when(
+      grepl("Data Import", helpful_sections) == TRUE ~ 1,
+      TRUE ~ 0),
+    wrangling_helpful = case_when(
+      grepl("Data Wrangling", helpful_sections) == TRUE ~ 1,
+      TRUE ~ 0),
+    visualization_helpful = case_when(
+      grepl("Data Visualization", helpful_sections) == TRUE ~ 1,
+      TRUE ~ 0),
+    analysis_helpful = case_when(
+      grepl("Data Analysis", helpful_sections) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(motivation_helpful, import_helpful, wrangling_helpful, 
+                 visualization_helpful, analysis_helpful, 
+                 .after = helpful_sections)
 
 educatordf = educatordf %>% 
   rename(do_different = 
@@ -610,9 +671,13 @@ educatordf = educatordf %>%
            `What type of data did you use? (select all that apply)`)
 educatordf %<>% 
   mutate(data_types = 
-           str_replace(data_types, "Raw data files or original source (ex. a website)", "Raw") %>%
-           str_replace("Wrangled data files (as rda files)", "Wrangled RDA") %>%
-           str_replace("Wrangled data files (as csv files)", "Wrangled CSV"))
+           str_replace(data_types, 
+                       "Raw data files or original source \\(ex. a website\\)", 
+                       "Raw") %>%
+           str_replace("Wrangled data files \\(as rda files\\)", 
+                       "Wrangled RDA") %>%
+           str_replace("Wrangled data files \\(as csv files\\)", 
+                       "Wrangled CSV"))
 attr(educatordf$data_types, "label") = 
   "What type of data did you use? (select all that apply)"
 attr(educatordf$data_types, "values") = 
