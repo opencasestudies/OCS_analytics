@@ -133,10 +133,8 @@ educatordf %<>%
       grepl("specific statistical topic", teaching_interests) == TRUE ~ 1, 
       TRUE ~ 0),
     teach_ds = case_when(
-      (grepl('"data science"', teaching_interests) == TRUE) && 
-        (length(teaching_interests) > 1)  ~ 1,
-      (grepl("data science", teaching_interests) == TRUE) && 
-        (length(teaching_interests) = 1)  ~ 1,
+      grepl('"data science"', teaching_interests) == TRUE ~ 1,
+      grepl("data science$", teaching_interests) == TRUE ~ 1,
       TRUE ~ 0),
     teach_spfc_ds = case_when(
       grepl("specific data science skill", teaching_interests) == TRUE ~ 1,
@@ -148,10 +146,8 @@ educatordf %<>%
       grepl("tidyverse", teaching_interests) == TRUE ~ 1,
       TRUE ~ 0),
     teach_PH = case_when(
-      (grepl('"public health"', teaching_interests) == TRUE) && 
-        (length(teaching_interests) > 1)  ~ 1,
-      (grepl("public health", teaching_interests) == TRUE) && 
-        (length(teaching_interests) = 1)  ~ 1,
+      grepl('"public health"', teaching_interests) == TRUE ~ 1,
+      grepl("public health$", teaching_interests) == TRUE ~ 1,
       TRUE ~ 0),
     teach_spfc_PH = case_when(
       grepl("specific public health topic", teaching_interests) == TRUE ~ 1,
@@ -960,10 +956,8 @@ studentdf %<>%
       grepl("specific statistical topic", learning_interests) == TRUE ~ 1, 
       TRUE ~ 0),
     learn_ds = case_when(
-      (grepl('"data science"', learning_interests) == TRUE) && 
-        (length(learning_interests) > 1)  ~ 1,
-      (grepl("data science", learning_interests) == TRUE) && 
-        (length(learning_interests) = 1)  ~ 1,
+      grepl('"data science"', learning_interests) == TRUE ~ 1,
+      grepl("data science$", learning_interests) == TRUE ~ 1,
       TRUE ~ 0),
     learn_spfc_ds = case_when(
       grepl("specific data science skill", learning_interests) == TRUE ~ 1,
@@ -975,10 +969,8 @@ studentdf %<>%
       grepl("tidyverse", learning_interests) == TRUE ~ 1,
       TRUE ~ 0),
     learn_PH = case_when(
-      (grepl('"public health"', learning_interests) == TRUE) && 
-        (length(learning_interests) > 1)  ~ 1,
-      (grepl("public health", learning_interests) == TRUE) && 
-        (length(learning_interests) = 1)  ~ 1,
+      grepl('"public health"', learning_interests) == TRUE ~ 1,
+      grepl("public health$", learning_interests) == TRUE ~ 1,
       TRUE ~ 0),
     learn_spfc_PH = case_when(
       grepl("specific public health topic", learning_interests) == TRUE ~ 1,
