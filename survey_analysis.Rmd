@@ -133,7 +133,10 @@ educatordf %<>%
       grepl("specific statistical topic", teaching_interests) == TRUE ~ 1, 
       TRUE ~ 0),
     teach_ds = case_when(
-      grepl('"data science"', teaching_interests) == TRUE ~ 1, 
+      (grepl('"data science"', teaching_interests) == TRUE) && 
+        (length(teaching_interests) > 1)  ~ 1,
+      (grepl("data science", teaching_interests) == TRUE) && 
+        (length(teaching_interests) = 1)  ~ 1,
       TRUE ~ 0),
     teach_spfc_ds = case_when(
       grepl("specific data science skill", teaching_interests) == TRUE ~ 1,
@@ -145,7 +148,10 @@ educatordf %<>%
       grepl("tidyverse", teaching_interests) == TRUE ~ 1,
       TRUE ~ 0),
     teach_PH = case_when(
-      grepl('"public health"', teaching_interests) == TRUE ~ 1,
+      (grepl('"public health"', teaching_interests) == TRUE) && 
+        (length(teaching_interests) > 1)  ~ 1,
+      (grepl("public health", teaching_interests) == TRUE) && 
+        (length(teaching_interests) = 1)  ~ 1,
       TRUE ~ 0),
     teach_spfc_PH = case_when(
       grepl("specific public health topic", teaching_interests) == TRUE ~ 1,
@@ -868,7 +874,40 @@ attr(studentdf$learned_new, "values") =
        "communication" = "Data communication methods",
        "public health" = "The public health topics presented")
 
-# separating learned_new into boolean columns 
+# separating learned_new into boolean columns
+
+studentdf %<>%
+  mutate(
+    learned_new_stats = case_when(
+      grepl("statistics", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_Rstats = case_when(
+      grepl("Rstats", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_import = case_when(
+      grepl("import", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_viz = case_when(
+      grepl("visualization", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_wrang = case_when(
+      grepl("wrangling", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_comm = case_when(
+      grepl("communication", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_PH = case_when(
+      grepl("public health", learned_new) == TRUE ~ 1,
+      TRUE ~ 0), 
+    learned_new_all = case_when(
+      grepl("All of the above", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_none = case_when(
+      grepl("None", learned_new) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(learned_new_stats, learned_new_Rstats, learned_new_import, learned_new_viz, 
+                 learned_new_wrang, learned_new_comm, learned_new_PH, learned_new_all, 
+                 learned_new_none, .after = learned_new)
 
 studentdf = studentdf %>%
   rename(how_found = 
@@ -909,6 +948,44 @@ attr(studentdf$learning_interests, "values") =
        "specific public health topic" = "interested in a specific case study public health topic (such as environment, mental health, etc.)",
        "specific data science skill" = "interested in a specific data science skill (such as how to create a dashboard, machine learning, etc.)",
        "specific statistical topic" = "interested in a specific statistical topic (such as how to perform a paired t-test)")
+
+# separating learning_interests into boolean columns
+
+studentdf %<>%
+  mutate(
+    learn_stats = case_when(
+      grepl("statistics", learning_interests) == TRUE ~ 1,
+      TRUE ~ 0),
+    learn_spfc_stats = case_when(
+      grepl("specific statistical topic", learning_interests) == TRUE ~ 1, 
+      TRUE ~ 0),
+    learn_ds = case_when(
+      (grepl('"data science"', learning_interests) == TRUE) && 
+        (length(learning_interests) > 1)  ~ 1,
+      (grepl("data science", learning_interests) == TRUE) && 
+        (length(learning_interests) = 1)  ~ 1,
+      TRUE ~ 0),
+    learn_spfc_ds = case_when(
+      grepl("specific data science skill", learning_interests) == TRUE ~ 1,
+      TRUE ~ 0),
+    learn_R = case_when(
+      grepl("R programming", learning_interests) == TRUE ~ 1, 
+      TRUE ~ 0),
+    learn_tidyverse = case_when(
+      grepl("tidyverse", learning_interests) == TRUE ~ 1,
+      TRUE ~ 0),
+    learn_PH = case_when(
+      (grepl('"public health"', learning_interests) == TRUE) && 
+        (length(learning_interests) > 1)  ~ 1,
+      (grepl("public health", learning_interests) == TRUE) && 
+        (length(learning_interests) = 1)  ~ 1,
+      TRUE ~ 0),
+    learn_spfc_PH = case_when(
+      grepl("specific public health topic", learning_interests) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(learn_stats, learn_ds, learn_PH, learn_R, 
+                 learn_tidyverse,  learn_spfc_PH, learn_spfc_ds,
+                 learn_spfc_stats, .after = learning_interests)
 
 studentdf = studentdf %>% 
   rename(enjoyment = 
