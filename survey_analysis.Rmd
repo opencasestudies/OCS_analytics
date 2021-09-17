@@ -69,6 +69,8 @@ look into making codebook
 see slack
 https://www.alexcernat.com/easy-way-to-make-a-codebook-in-r/
 
+## Wrangling
+
 ### changing column/variable names, saving old name (the question posed in survey) as attribute label, shortening answers
 
 educator:
@@ -230,7 +232,7 @@ educatordf %<>%
 attr(educatordf$case_studies, "label") = 
   "What case study(ies) have you looked at?  (select all that apply)...53"
 
-# seperating case studies into boolean columns
+# seperating case_studies into boolean columns
 
 educatordf %<>%
   mutate(
@@ -1021,6 +1023,52 @@ studentdf %<>%
   )
 attr(studentdf$case_studies, "label") = 
   "What case study(ies) have you looked at?  (select all that apply)...61"
+
+# separating case_studies into boolean columns
+
+studentdf %<>%
+  mutate(
+    looked_at_obesity = case_when(
+      grepl("obesity", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_diet = case_when(
+      grepl("diet", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_school_shootings = case_when(
+      grepl("school shootings", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_RTC_wrangling = case_when(
+      grepl("multicollinearity and RTC laws (wrangling)", case_studies, 
+            fixed = TRUE) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_RTC_analysis = case_when(
+      grepl("multicollinearity and RTC laws (analysis)", case_studies, 
+            fixed = TRUE) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_air_pollution = case_when(
+      grepl("predicting air pollution", case_studies) == TRUE ~ 1, 
+      TRUE ~ 0),
+    looked_at_co2_emissions = case_when(
+      grepl("CO2 emissions", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_youth_disconnection = case_when(
+      grepl("youth disconnection", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_mental_health = case_when(
+      grepl("youth mental health", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_opioids = case_when(
+      grepl("opioid shipments in the US", case_studies) == TRUE ~ 1,
+      TRUE ~ 0),
+    looked_at_vaping = case_when(
+      grepl("vaping behaviours among US youths", case_studies) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(looked_at_obesity, looked_at_diet, looked_at_school_shootings, 
+                 looked_at_RTC_wrangling, looked_at_RTC_analysis, 
+                 looked_at_air_pollution, looked_at_co2_emissions,
+                 looked_at_youth_disconnection, looked_at_mental_health,
+                 looked_at_opioids, looked_at_vaping,
+                 .after = case_studies)
 
 studentdf = studentdf %>% 
   rename(student_type = 
