@@ -130,6 +130,7 @@ educatordf %<>%
   mutate(
     teach_stats = case_when(
       grepl("statistics", teaching_interests) == TRUE ~ 1,
+      teaching_interests == NA ~ NA,
       TRUE ~ 0),
     teach_spfc_stats = case_when(
       grepl("specific statistical topic", teaching_interests) == TRUE ~ 1, 
@@ -1306,6 +1307,41 @@ attr(self_learnerdf$learned_new, "values") =
        "communication" = "Data communication methods",
        "public health" = "The public health topics presented")
 
+# separating learned_new into boolean columns
+
+self_learnerdf %<>%
+  mutate(
+    learned_new_stats = case_when(
+      grepl("statistics", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_Rstats = case_when(
+      grepl("Rstats", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_import = case_when(
+      grepl("import", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_viz = case_when(
+      grepl("visualization", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_wrang = case_when(
+      grepl("wrangling", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_comm = case_when(
+      grepl("communication", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_PH = case_when(
+      grepl("public health", learned_new) == TRUE ~ 1,
+      TRUE ~ 0), 
+    learned_new_all = case_when(
+      grepl("All of the above", learned_new) == TRUE ~ 1,
+      TRUE ~ 0),
+    learned_new_none = case_when(
+      grepl("None", learned_new) == TRUE ~ 1,
+      TRUE ~ 0)
+  ) %>% relocate(learned_new_stats, learned_new_Rstats, learned_new_import, learned_new_viz, 
+                 learned_new_wrang, learned_new_comm, learned_new_PH, learned_new_all, 
+                 learned_new_none, .after = learned_new)
+
 self_learnerdf = self_learnerdf %>% 
   rename(enjoyment = 
            `How enjoyable did you find the case study/studies as a way to learn about these topics?...49`)
@@ -1348,6 +1384,8 @@ self_learnerdf %<>%
   )
 attr(self_learnerdf$case_studies, "label") = 
   "What case study(ies) have you looked at?  (select all that apply)...62"
+
+# separate case_studies into boolean columns
 
 self_learnerdf = self_learnerdf %>% 
   rename(over18 = 
