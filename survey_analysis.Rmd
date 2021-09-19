@@ -1639,6 +1639,12 @@ if(0 %in% checks){
 }
 ```
 
+## Analysis & Visualization
+
+```{r, responder_category}
+ggplot(consented, aes(x = as.factor(responder_category))) +
+  geom_bar()
+```
 
 
 **ignore:**
@@ -1672,3 +1678,4 @@ surveydf = surveydf %>% rename(refer_back = 11)
 attr(surveydf$refer_back, "label") = "How likely are you to refer back to the case study/studies in the future?...11"
 
 ```
+
