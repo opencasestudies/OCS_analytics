@@ -129,32 +129,39 @@ attr(educatordf$teaching_interests, "values") =
 educatordf %<>%
   mutate(
     teach_stats = case_when(
-      grepl("statistics", teaching_interests) == TRUE ~ 1,
-      teaching_interests == NA ~ NA,
-      TRUE ~ 0),
+      grepl("statistics", teaching_interests) == TRUE ~ "1",
+      is.na(teaching_interests) ~ "NA",
+      TRUE ~ "0"),
     teach_spfc_stats = case_when(
-      grepl("specific statistical topic", teaching_interests) == TRUE ~ 1, 
-      TRUE ~ 0),
+      grepl("specific statistical topic", teaching_interests) == TRUE ~ "1", 
+      is.na(teaching_interests) ~ "NA",
+      TRUE ~ "0"),
     teach_ds = case_when(
-      grepl('"data science"', teaching_interests) == TRUE ~ 1,
-      grepl("data science$", teaching_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl('"data science"', teaching_interests) == TRUE ~ "1",
+      grepl("data science$", teaching_interests) == TRUE ~ "1",
+      is.na(teaching_interests) ~ "NA",
+      TRUE ~ "0"),
     teach_spfc_ds = case_when(
-      grepl("specific data science skill", teaching_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("specific data science skill", teaching_interests) == TRUE ~ "1",
+      is.na(teaching_interests) ~ "NA",
+      TRUE ~ "0"),
     teach_R = case_when(
-      grepl("R programming", teaching_interests) == TRUE ~ 1, 
-      TRUE ~ 0),
+      grepl("R programming", teaching_interests) == TRUE ~ "1", 
+      is.na(teaching_interests) ~ "NA",
+      TRUE ~ "0"),
     teach_tidyverse = case_when(
-      grepl("tidyverse", teaching_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("tidyverse", teaching_interests) == TRUE ~ "1",
+      is.na(teaching_interests) ~ "NA",
+      TRUE ~ "0"),
     teach_PH = case_when(
-      grepl('"public health"', teaching_interests) == TRUE ~ 1,
-      grepl("public health$", teaching_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl('"public health"', teaching_interests) == TRUE ~ "1",
+      grepl("public health$", teaching_interests) == TRUE ~ "1",
+      is.na(teaching_interests) ~ "NA",
+      TRUE ~ "0"),
     teach_spfc_PH = case_when(
-      grepl("specific public health topic", teaching_interests) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("specific public health topic", teaching_interests) == TRUE ~ "1",
+      is.na(teaching_interests) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(teach_stats, teach_spfc_stats, teach_ds, teach_spfc_ds,
                  teach_R, teach_tidyverse, teach_PH, teach_spfc_PH, 
                  .after = teaching_interests)
@@ -176,17 +183,21 @@ attr(educatordf$type_student_taught, "label") =
 educatordf %<>%
   mutate(
     teach_grad = case_when(
-      grepl("Graduate students", type_student_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Graduate students", type_student_taught) == TRUE ~ "1",
+      is.na(type_student_taught) ~ "NA",
+      TRUE ~ "0"),
     teach_ugrad = case_when(
-      grepl("Undergraduate students", type_student_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Undergraduate students", type_student_taught) == TRUE ~ "1",
+      is.na(type_student_taught) ~ "NA",
+      TRUE ~ "0"),
     teach_HS = case_when(
-      grepl("High school students", type_student_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("High school students", type_student_taught) == TRUE ~ "1",
+      is.na(type_student_taught) ~ "NA",
+      TRUE ~ "0"),
     teach_middle = case_when(
-      grepl("Middle school students", type_student_taught) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("Middle school students", type_student_taught) == TRUE ~ "1",
+      is.na(type_student_taught) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(teach_grad, teach_ugrad, teach_HS, teach_middle, 
                  .after = type_student_taught) 
 
@@ -201,17 +212,21 @@ attr(educatordf$course_type, "label") =
 educatordf %<>%
   mutate(
     would_use_PH_course = case_when(
-      grepl("Public Health", course_type) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Public Health", course_type) == TRUE ~ "1",
+      is.na(course_type) ~ "NA",
+      TRUE ~ "0"),
     would_use_stats_course = case_when(
-      grepl("Statistics", course_type) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Statistics", course_type) == TRUE ~ "1",
+      is.na(course_type) ~ "NA",
+      TRUE ~ "0"),
     would_use_math_course = case_when(
-      grepl("Math", course_type) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Math", course_type) == TRUE ~ "1",
+      is.na(course_type) ~ "NA",
+      TRUE ~ "0"),
     would_use_DS_course = case_when(
-      grepl("Data Science", course_type) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("Data Science", course_type) == TRUE ~ "1",
+      is.na(course_type) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(would_use_PH_course, would_use_stats_course, would_use_math_course, 
                  would_use_DS_course, .after = course_type) 
 
@@ -238,43 +253,55 @@ attr(educatordf$case_studies, "label") =
 educatordf %<>%
   mutate(
     looked_at_obesity = case_when(
-      grepl("obesity", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("obesity", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_diet = case_when(
-      grepl("diet", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("diet", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_school_shootings = case_when(
-      grepl("school shootings", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("school shootings", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_RTC_wrangling = case_when(
       grepl("multicollinearity and RTC laws (wrangling)", case_studies, 
-            fixed = TRUE) == TRUE ~ 1,
-      TRUE ~ 0),
+            fixed = TRUE) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_RTC_analysis = case_when(
       grepl("multicollinearity and RTC laws (analysis)", case_studies, 
-            fixed = TRUE) == TRUE ~ 1,
-      TRUE ~ 0),
+            fixed = TRUE) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_air_pollution = case_when(
-      grepl("predicting air pollution", case_studies) == TRUE ~ 1, 
-      TRUE ~ 0),
+      grepl("predicting air pollution", case_studies) == TRUE ~ "1", 
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_co2_emissions = case_when(
-      grepl("CO2 emissions", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("CO2 emissions", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_youth_disconnection = case_when(
-      grepl("youth disconnection", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("youth disconnection", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_mental_health = case_when(
-      grepl("youth mental health", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("youth mental health", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_opioids = case_when(
-      grepl("opioid shipments in the US", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("opioid shipments in the US", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_vaping = case_when(
-      grepl("vaping behaviours among US youths", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("vaping behaviours among US youths", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_none = case_when(
-      grepl("None", case_studies) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("None", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(looked_at_obesity, looked_at_diet, looked_at_school_shootings, 
                  looked_at_RTC_wrangling, looked_at_RTC_analysis, 
                  looked_at_air_pollution, looked_at_co2_emissions,
@@ -295,46 +322,59 @@ attr(educatordf$ocs_interest, "label") =
 educatordf %<>%
   mutate(
     might_use_obesity = case_when(
-      grepl("obesity", ocs_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("obesity", ocs_interest) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_diet = case_when(
-      grepl("diet", ocs_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("diet", ocs_interest) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_school_shootings = case_when(
-      grepl("school shootings", ocs_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("school shootings", ocs_interest) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_RTC_wrangling = case_when(
       grepl("multicollinearity and RTC laws (wrangling)", ocs_interest, 
-            fixed = TRUE) == TRUE ~ 1,
-      TRUE ~ 0),
+            fixed = TRUE) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_RTC_analysis = case_when(
       grepl("multicollinearity and RTC laws (analysis)", ocs_interest, 
-            fixed = TRUE) == TRUE ~ 1,
-      TRUE ~ 0),
+            fixed = TRUE) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_air_pollution = case_when(
-      grepl("predicting air pollution", ocs_interest) == TRUE ~ 1, 
-      TRUE ~ 0),
+      grepl("predicting air pollution", ocs_interest) == TRUE ~ "1", 
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_co2_emissions = case_when(
-      grepl("CO2 emissions", ocs_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("CO2 emissions", ocs_interest) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_youth_disconnection = case_when(
-      grepl("youth disconnection", ocs_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("youth disconnection", ocs_interest) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_mental_health = case_when(
-      grepl("youth mental health", ocs_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("youth mental health", ocs_interest) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_opioids = case_when(
-      grepl("opioid shipments in the US", ocs_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("opioid shipments in the US", ocs_interest) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_vaping = case_when(
-      grepl("vaping behaviours among US youths", ocs_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("vaping behaviours among US youths", ocs_interest) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_none = case_when(
-      grepl("None", ocs_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("None", ocs_interest) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0"),
     might_use_not_sure = case_when(
-      grepl("Not sure yet", ocs_interest) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("Not sure yet", ocs_interest) == TRUE ~ "1",
+      is.na(ocs_interest) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(might_use_obesity, might_use_diet, might_use_school_shootings, 
                  might_use_RTC_wrangling, might_use_RTC_analysis, 
                  might_use_air_pollution, might_use_co2_emissions,
@@ -377,17 +417,21 @@ attr(educatordf$parts_used, "values") =
 educatordf %<>%
   mutate(
     interest_data = case_when(
-      parts_used == "Data" ~ 1,
-      TRUE ~ 0),
+      parts_used == "Data" ~ "1",
+      is.na(parts_used) ~ "NA",
+      TRUE ~ "0"),
     interest_part = case_when(
-      parts_used == "Part" ~ 1,
-      TRUE ~ 0),
+      parts_used == "Part" ~ "1",
+      is.na(parts_used) ~ "NA",
+      TRUE ~ "0"),
     interest_full = case_when(
-      parts_used == "Full" ~ 1, 
-      TRUE ~ 0),
+      parts_used == "Full" ~ "1", 
+      is.na(parts_used) ~ "NA",
+      TRUE ~ "0"),
     interest_combination = case_when(
-      parts_used == "Combination" ~ 1,
-      TRUE ~ 0)
+      parts_used == "Combination" ~ "1",
+      is.na(parts_used) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(interest_data, interest_part, interest_full,
                  interest_combination, .after = parts_used)
 
@@ -402,29 +446,37 @@ attr(educatordf$materials_interest, "label") =
 educatordf %<>%
   mutate(
     motivation_interest = case_when(
-      grepl("Motivation/Context", materials_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Motivation/Context", materials_interest) == TRUE ~ "1",
+      is.na(materials_interest) ~ "NA",
+      TRUE ~ "0"),
     import_interest = case_when(
-      grepl("Data Import", materials_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Data Import", materials_interest) == TRUE ~ "1",
+      is.na(materials_interest) ~ "NA",
+      TRUE ~ "0"),
     wrangling_interest = case_when(
-      grepl("Data Wrangling", materials_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Data Wrangling", materials_interest) == TRUE ~ "1",
+      is.na(materials_interest) ~ "NA",
+      TRUE ~ "0"),
     exploration_interest = case_when(
-      grepl("Data Exploration", materials_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Data Exploration", materials_interest) == TRUE ~ "1",
+      is.na(materials_interest) ~ "NA",
+      TRUE ~ "0"),
     visualization_interest = case_when(
-      grepl("Data Visualization", materials_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Data Visualization", materials_interest) == TRUE ~ "1",
+      is.na(materials_interest) ~ "NA",
+      TRUE ~ "0"),
     analysis_interest = case_when(
-      grepl("Data Analysis", materials_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Data Analysis", materials_interest) == TRUE ~ "1",
+      is.na(materials_interest) ~ "NA",
+      TRUE ~ "0"),
     data_interest = case_when(
-      grepl("The data itself", materials_interest) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("The data itself", materials_interest) == TRUE ~ "1",
+      is.na(materials_interest) ~ "NA",
+      TRUE ~ "0"),
     all_interest = case_when(
-      grepl("All sections", materials_interest) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("All sections", materials_interest) == TRUE ~ "1",
+      is.na(materials_interest) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(motivation_interest, import_interest, wrangling_interest, 
                  exploration_interest, visualization_interest, analysis_interest,
                  data_interest, all_interest, .after = materials_interest)
@@ -454,46 +506,59 @@ attr(educatordf$ocs_taught, "label") =
 educatordf %<>%
   mutate(
     used_obesity = case_when(
-      grepl("obesity", ocs_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("obesity", ocs_taught) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_diet = case_when(
-      grepl("diet", ocs_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("diet", ocs_taught) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_school_shootings = case_when(
-      grepl("school shootings", ocs_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("school shootings", ocs_taught) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_RTC_wrangling = case_when(
       grepl("multicollinearity and RTC laws (wrangling)", ocs_taught, 
-            fixed = TRUE) == TRUE ~ 1,
-      TRUE ~ 0),
+            fixed = TRUE) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_RTC_analysis = case_when(
       grepl("multicollinearity and RTC laws (analysis)", ocs_taught, 
-            fixed = TRUE) == TRUE ~ 1,
-      TRUE ~ 0),
+            fixed = TRUE) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_air_pollution = case_when(
-      grepl("predicting air pollution", ocs_taught) == TRUE ~ 1, 
-      TRUE ~ 0),
+      grepl("predicting air pollution", ocs_taught) == TRUE ~ "1", 
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_co2_emissions = case_when(
-      grepl("CO2 emissions", ocs_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("CO2 emissions", ocs_taught) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_youth_disconnection = case_when(
-      grepl("youth disconnection", ocs_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("youth disconnection", ocs_taught) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_mental_health = case_when(
-      grepl("youth mental health", ocs_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("youth mental health", ocs_taught) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_opioids = case_when(
-      grepl("opioid shipments in the US", ocs_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("opioid shipments in the US", ocs_taught) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_vaping = case_when(
-      grepl("vaping behaviours among US youths", ocs_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("vaping behaviours among US youths", ocs_taught) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_none = case_when(
-      grepl("None", ocs_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("None", ocs_taught) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0"),
     used_not_sure = case_when(
-      grepl("Not sure yet", ocs_taught) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("Not sure yet", ocs_taught) == TRUE ~ "1",
+      is.na(ocs_taught) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(used_obesity, used_diet, used_school_shootings, 
                  used_RTC_wrangling, used_RTC_analysis, 
                  used_air_pollution, used_co2_emissions,
@@ -512,17 +577,21 @@ attr(educatordf$courses_taught, "label") =
 educatordf %<>%
   mutate(
     taught_PH_course = case_when(
-      grepl("Public Health", courses_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Public Health", courses_taught) == TRUE ~ "1",
+      is.na(courses_taught) ~ "NA",
+      TRUE ~ "0"),
     taught_stats_course = case_when(
-      grepl("Statistics", courses_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Statistics", courses_taught) == TRUE ~ "1",
+      is.na(courses_taught) ~ "NA",
+      TRUE ~ "0"),
     taught_math_course = case_when(
-      grepl("Math", courses_taught) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Math", courses_taught) == TRUE ~ "1",
+      is.na(courses_taught) ~ "NA",
+      TRUE ~ "0"),
     taught_DS_course = case_when(
-      grepl("Data Science", courses_taught) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("Data Science", courses_taught) == TRUE ~ "1",
+      is.na(courses_taught) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(taught_PH_course, taught_stats_course, taught_math_course, 
                  taught_DS_course, .after = courses_taught) 
 
@@ -604,17 +673,21 @@ attr(educatordf$parts_taught, "values") =
 educatordf %<>%
   mutate(
     taught_data = case_when(
-      parts_taught == "Data" ~ 1,
-      TRUE ~ 0),
+      parts_taught == "Data" ~ "1",
+      is.na(parts_taught) ~ "NA",
+      TRUE ~ "0"),
     taught_part = case_when(
-      parts_taught == "Part" ~ 1,
-      TRUE ~ 0),
+      parts_taught == "Part" ~ "1",
+      is.na(parts_taught) ~ "NA",
+      TRUE ~ "0"),
     taught_full = case_when(
-      parts_taught == "Full" ~ 1, 
-      TRUE ~ 0),
+      parts_taught == "Full" ~ "1", 
+      is.na(parts_taught) ~ "NA",
+      TRUE ~ "0"),
     taught_combination = case_when(
-      parts_taught == "Combination" ~ 1,
-      TRUE ~ 0)
+      parts_taught == "Combination" ~ "1",
+      is.na(parts_taught) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(taught_data, taught_part, taught_full,
                  taught_combination, .after = parts_taught)
 
@@ -635,20 +708,25 @@ attr(educatordf$helpful_sections, "label") =
 educatordf %<>%
   mutate(
     motivation_helpful = case_when(
-      grepl("Motivation/Context/What are the data?", helpful_sections) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Motivation/Context/What are the data?", helpful_sections) == TRUE ~ "1",
+      is.na(helpful_sections) ~ "NA",
+      TRUE ~ "0"),
     import_helpful = case_when(
-      grepl("Data Import", helpful_sections) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Data Import", helpful_sections) == TRUE ~ "1",
+      is.na(helpful_sections) ~ "NA",
+      TRUE ~ "0"),
     wrangling_helpful = case_when(
-      grepl("Data Wrangling", helpful_sections) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Data Wrangling", helpful_sections) == TRUE ~ "1",
+      is.na(helpful_sections) ~ "NA",
+      TRUE ~ "0"),
     visualization_helpful = case_when(
-      grepl("Data Visualization", helpful_sections) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Data Visualization", helpful_sections) == TRUE ~ "1",
+      is.na(helpful_sections) ~ "NA",
+      TRUE ~ "0"),
     analysis_helpful = case_when(
-      grepl("Data Analysis", helpful_sections) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("Data Analysis", helpful_sections) == TRUE ~ "1",
+      is.na(helpful_sections) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(motivation_helpful, import_helpful, wrangling_helpful, 
                  visualization_helpful, analysis_helpful, 
                  .after = helpful_sections)
@@ -878,32 +956,41 @@ attr(studentdf$learned_new, "values") =
 studentdf %<>%
   mutate(
     learned_new_stats = case_when(
-      grepl("statistics", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("statistics", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_Rstats = case_when(
-      grepl("Rstats", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Rstats", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_import = case_when(
-      grepl("import", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("import", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_viz = case_when(
-      grepl("visualization", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("visualization", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_wrang = case_when(
-      grepl("wrangling", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("wrangling", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_comm = case_when(
-      grepl("communication", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("communication", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_PH = case_when(
-      grepl("public health", learned_new) == TRUE ~ 1,
-      TRUE ~ 0), 
+      grepl("public health", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"), 
     learned_new_all = case_when(
-      grepl("All of the above", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("All of the above", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_none = case_when(
-      grepl("None", learned_new) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("None", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(learned_new_stats, learned_new_Rstats, learned_new_import, learned_new_viz, 
                  learned_new_wrang, learned_new_comm, learned_new_PH, learned_new_all, 
                  learned_new_none, .after = learned_new)
@@ -953,31 +1040,39 @@ attr(studentdf$learning_interests, "values") =
 studentdf %<>%
   mutate(
     learn_stats = case_when(
-      grepl("statistics", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("statistics", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_spfc_stats = case_when(
-      grepl("specific statistical topic", learning_interests) == TRUE ~ 1, 
-      TRUE ~ 0),
+      grepl("specific statistical topic", learning_interests) == TRUE ~ "1", 
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_ds = case_when(
-      grepl('"data science"', learning_interests) == TRUE ~ 1,
-      grepl("data science$", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl('"data science"', learning_interests) == TRUE ~ "1",
+      grepl("data science$", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_spfc_ds = case_when(
-      grepl("specific data science skill", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("specific data science skill", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_R = case_when(
-      grepl("R programming", learning_interests) == TRUE ~ 1, 
-      TRUE ~ 0),
+      grepl("R programming", learning_interests) == TRUE ~ "1", 
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_tidyverse = case_when(
-      grepl("tidyverse", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("tidyverse", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_PH = case_when(
-      grepl('"public health"', learning_interests) == TRUE ~ 1,
-      grepl("public health$", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl('"public health"', learning_interests) == TRUE ~ "1",
+      grepl("public health$", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_spfc_PH = case_when(
-      grepl("specific public health topic", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("specific public health topic", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(learn_stats, learn_ds, learn_PH, learn_R, 
                  learn_tidyverse,  learn_spfc_PH, learn_spfc_ds,
                  learn_spfc_stats, .after = learning_interests)
@@ -1018,7 +1113,7 @@ studentdf %<>%
                             "multicollinearity and RTC laws \\(analysis\\)",
                             "predicting air pollution", "CO2 emissions",
                             "youth disconnection", "youth mental health", 
-                            "opioid shipments in the US", "None",
+                            "opioid shipments in the US",
                             "vaping behaviours among US youths"), collapse = "|")),
     case_studies = str_remove_all(case_studies, ":")
   )
@@ -1030,40 +1125,51 @@ attr(studentdf$case_studies, "label") =
 studentdf %<>%
   mutate(
     looked_at_obesity = case_when(
-      grepl("obesity", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("obesity", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_diet = case_when(
-      grepl("diet", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("diet", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_school_shootings = case_when(
-      grepl("school shootings", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("school shootings", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_RTC_wrangling = case_when(
       grepl("multicollinearity and RTC laws (wrangling)", case_studies, 
-            fixed = TRUE) == TRUE ~ 1,
-      TRUE ~ 0),
+            fixed = TRUE) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_RTC_analysis = case_when(
       grepl("multicollinearity and RTC laws (analysis)", case_studies, 
-            fixed = TRUE) == TRUE ~ 1,
-      TRUE ~ 0),
+            fixed = TRUE) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_air_pollution = case_when(
-      grepl("predicting air pollution", case_studies) == TRUE ~ 1, 
-      TRUE ~ 0),
+      grepl("predicting air pollution", case_studies) == TRUE ~ "1", 
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_co2_emissions = case_when(
-      grepl("CO2 emissions", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("CO2 emissions", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_youth_disconnection = case_when(
-      grepl("youth disconnection", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("youth disconnection", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_mental_health = case_when(
-      grepl("youth mental health", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("youth mental health", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_opioids = case_when(
-      grepl("opioid shipments in the US", case_studies) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("opioid shipments in the US", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
     looked_at_vaping = case_when(
-      grepl("vaping behaviours among US youths", case_studies) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("vaping behaviours among US youths", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(looked_at_obesity, looked_at_diet, looked_at_school_shootings, 
                  looked_at_RTC_wrangling, looked_at_RTC_analysis, 
                  looked_at_air_pollution, looked_at_co2_emissions,
@@ -1162,34 +1268,44 @@ attr(self_learnerdf$learning_interests, "values") =
        "specific statistical topic" = "interested in a specific statistical topic (such as how to perform a paired t-test)"
   )
 
+# separating learning_interests into boolean columns
+
 self_learnerdf %<>%
   mutate(
     learn_stats = case_when(
-      grepl("statistics", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("statistics", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_spfc_stats = case_when(
-      grepl("specific statistical topic", learning_interests) == TRUE ~ 1, 
-      TRUE ~ 0),
+      grepl("specific statistical topic", learning_interests) == TRUE ~ "1", 
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_ds = case_when(
-      grepl('"data science"', learning_interests) == TRUE ~ 1,
-      grepl("data science$", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl('"data science"', learning_interests) == TRUE ~ "1",
+      grepl("data science$", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_spfc_ds = case_when(
-      grepl("specific data science skill", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("specific data science skill", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_R = case_when(
-      grepl("R programming", learning_interests) == TRUE ~ 1, 
-      TRUE ~ 0),
+      grepl("R programming", learning_interests) == TRUE ~ "1", 
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_tidyverse = case_when(
-      grepl("tidyverse", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("tidyverse", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_PH = case_when(
-      grepl('"public health"', learning_interests) == TRUE ~ 1,
-      grepl("public health$", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl('"public health"', learning_interests) == TRUE ~ "1",
+      grepl("public health$", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0"),
     learn_spfc_PH = case_when(
-      grepl("specific public health topic", learning_interests) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("specific public health topic", learning_interests) == TRUE ~ "1",
+      is.na(learning_interests) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(learn_stats, learn_ds, learn_PH, learn_R, 
                  learn_tidyverse,  learn_spfc_PH, learn_spfc_ds,
                  learn_spfc_stats, .after = learning_interests)
@@ -1312,32 +1428,41 @@ attr(self_learnerdf$learned_new, "values") =
 self_learnerdf %<>%
   mutate(
     learned_new_stats = case_when(
-      grepl("statistics", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("statistics", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_Rstats = case_when(
-      grepl("Rstats", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("Rstats", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_import = case_when(
-      grepl("import", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("import", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_viz = case_when(
-      grepl("visualization", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("visualization", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_wrang = case_when(
-      grepl("wrangling", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("wrangling", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_comm = case_when(
-      grepl("communication", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("communication", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_PH = case_when(
-      grepl("public health", learned_new) == TRUE ~ 1,
-      TRUE ~ 0), 
+      grepl("public health", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"), 
     learned_new_all = case_when(
-      grepl("All of the above", learned_new) == TRUE ~ 1,
-      TRUE ~ 0),
+      grepl("All of the above", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0"),
     learned_new_none = case_when(
-      grepl("None", learned_new) == TRUE ~ 1,
-      TRUE ~ 0)
+      grepl("None", learned_new) == TRUE ~ "1",
+      is.na(learned_new) ~ "NA",
+      TRUE ~ "0")
   ) %>% relocate(learned_new_stats, learned_new_Rstats, learned_new_import, learned_new_viz, 
                  learned_new_wrang, learned_new_comm, learned_new_PH, learned_new_all, 
                  learned_new_none, .after = learned_new)
@@ -1378,7 +1503,7 @@ self_learnerdf %<>%
                             "multicollinearity and RTC laws \\(analysis\\)",
                             "predicting air pollution", "CO2 emissions",
                             "youth disconnection", "youth mental health", 
-                            "opioid shipments in the US", "None",
+                            "opioid shipments in the US",
                             "vaping behaviours among US youths"), collapse = "|")),
     case_studies = str_remove_all(case_studies, ":")
   )
@@ -1386,6 +1511,61 @@ attr(self_learnerdf$case_studies, "label") =
   "What case study(ies) have you looked at?  (select all that apply)...62"
 
 # separate case_studies into boolean columns
+
+self_learnerdf %<>%
+  mutate(
+    looked_at_obesity = case_when(
+      grepl("obesity", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
+    looked_at_diet = case_when(
+      grepl("diet", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
+    looked_at_school_shootings = case_when(
+      grepl("school shootings", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
+    looked_at_RTC_wrangling = case_when(
+      grepl("multicollinearity and RTC laws (wrangling)", case_studies, 
+            fixed = TRUE) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
+    looked_at_RTC_analysis = case_when(
+      grepl("multicollinearity and RTC laws (analysis)", case_studies, 
+            fixed = TRUE) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
+    looked_at_air_pollution = case_when(
+      grepl("predicting air pollution", case_studies) == TRUE ~ "1", 
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
+    looked_at_co2_emissions = case_when(
+      grepl("CO2 emissions", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
+    looked_at_youth_disconnection = case_when(
+      grepl("youth disconnection", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
+    looked_at_mental_health = case_when(
+      grepl("youth mental health", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
+    looked_at_opioids = case_when(
+      grepl("opioid shipments in the US", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0"),
+    looked_at_vaping = case_when(
+      grepl("vaping behaviours among US youths", case_studies) == TRUE ~ "1",
+      is.na(case_studies) ~ "NA",
+      TRUE ~ "0")
+  ) %>% relocate(looked_at_obesity, looked_at_diet, looked_at_school_shootings, 
+                 looked_at_RTC_wrangling, looked_at_RTC_analysis, 
+                 looked_at_air_pollution, looked_at_co2_emissions,
+                 looked_at_youth_disconnection, looked_at_mental_health,
+                 looked_at_opioids, looked_at_vaping,
+                 .after = case_studies)
 
 self_learnerdf = self_learnerdf %>% 
   rename(over18 = 
