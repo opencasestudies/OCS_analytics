@@ -1642,46 +1642,74 @@ if(0 %in% checks){
 ## Analysis & Visualization
 
 ```{r}
-theme_set(theme_minimal())
+theme_set(theme_linedraw() + theme(axis.text = element_text(size = 11, color = "black"),
+                                  axis.title = element_text(size = 12, color = "black"),
+                                  plot.title = element_text(hjust = .5))
+          )
 ```
 
 
 ```{r, responder_category}
-ggplot(consented, aes(x = as.factor(responder_category), fill = responder_category)) +
-  geom_bar() + 
-  scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
+ggplot(consented, aes(x = forcats::fct_infreq(as.factor(responder_category)), fill = responder_category)) +
+  geom_bar(color = "black") + scale_fill_viridis_d() +
+  # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
   labs(x = "User Category", y = "Count", title = "Count of Survey Responders by Category") + 
   guides(fill = "none")
     
 ```
 
 ```{r, educator_teaching_interests}
-teach_int_sum = tibble(teach_stats = 
-                         sum(as.numeric(educatordf$teach_stats)), 
-                  teach_spfc_stats = 
-                    sum(as.numeric(educatordf$teach_spfc_stats)),
-                  teach_ds = 
-                    sum(as.numeric(educatordf$teach_ds)),
-                  teach_spfc_ds =
-                    sum(as.numeric(educatordf$teach_spfc_ds)),
-                  teach_R = 
-                    sum(as.numeric(educatordf$teach_R)),
-                  teach_tidyverse = 
-                    sum(as.numeric(educatordf$teach_tidyverse)),
-                  teach_PH = 
-                    sum(as.numeric(educatordf$teach_PH)),
-                  teach_spfc_PH = 
-                    sum(as.numeric(educatordf$teach_spfc_PH))
-                  )
+# teach_int_sum = educatordf %>% select(starts_with("teach_")) %>% 
+#   select(-contains(c("grad", "HS", "middle", "enjoy"))) %>%
+#   mutate(across(, ~as.numeric(.))) %>%
+#   colSums() %>% as.data.frame() %>% rownames_to_column()
 
+teach_int_sum = educatordf %>% select(starts_with("teach_")) %>% 
+  select(-contains(c("grad", "HS", "middle", "enjoy"))) %>% 
+  mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything(), names_to = "topic", values_to = "count")
 
-ggplot(teach_int_sum, aes()) +
-  geom_bar() + 
-  scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
+ggplot(teach_int_sum, aes(x = topic, y = count, fill = topic)) +
+  geom_col() + scale_fill_viridis_d() + 
+ # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
   labs(x = "Subject", y = "Count", title = "Educator Teaching Interests") + 
-  guides(fill = "none")
+  guides(fill = "none") + theme(axis.text.x = element_text(angle = 60, vjust = 0.5))
 ```
 
+```{r}
+teach_int_sum = educatordf %>% select(starts_with("teach_")) %>% 
+  select(-contains(c("grad", "HS", "middle", "enjoy"))) %>% 
+  mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything(), names_to = "topic", values_to = "count") %>%
+  mutate(percent = round(count/nrow(educatordf)*100)) %>% 
+  mutate(specific = str_detect(topic, "_spfc_")) %>% 
+  mutate(topic = case_when(
+    str_detect(topic, pattern = "stats") == TRUE ~ "Statistics",
+    str_detect(topic, pattern = "ds") == TRUE ~ "Data Science",
+    str_detect(topic, pattern = "PH") == TRUE ~ "Public Health",
+    str_detect(topic, pattern = "R") == TRUE ~ "R",
+    str_detect(topic, pattern = "tidyverse") == TRUE ~ "Tidyverse"
+    )
+  ) %>% 
+  mutate(name = case_when(
+    specific == TRUE ~ paste("Specific", topic, "Topic", sep = "\n"),
+    TRUE ~ topic
+    )
+  )
+  
+
+ggplot(teach_int_sum, aes(x = fct_reorder(as.factor(name), specific), y = percent, 
+                          fill = topic)) +
+  geom_col() + scale_fill_viridis_d() + 
+ # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
+  labs(x = "Subject", y = "Percent of Responders", title = "Educator Teaching Interests") + 
+  guides(fill = "none") + theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + 
+  ylim(c(0,100))
+```
 
 **ignore:**
 
