@@ -1641,9 +1641,45 @@ if(0 %in% checks){
 
 ## Analysis & Visualization
 
+```{r}
+theme_set(theme_minimal())
+```
+
+
 ```{r, responder_category}
-ggplot(consented, aes(x = as.factor(responder_category))) +
-  geom_bar()
+ggplot(consented, aes(x = as.factor(responder_category), fill = responder_category)) +
+  geom_bar() + 
+  scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
+  labs(x = "User Category", y = "Count", title = "Count of Survey Responders by Category") + 
+  guides(fill = "none")
+    
+```
+
+```{r, educator_teaching_interests}
+teach_int_sum = tibble(teach_stats = 
+                         sum(as.numeric(educatordf$teach_stats)), 
+                  teach_spfc_stats = 
+                    sum(as.numeric(educatordf$teach_spfc_stats)),
+                  teach_ds = 
+                    sum(as.numeric(educatordf$teach_ds)),
+                  teach_spfc_ds =
+                    sum(as.numeric(educatordf$teach_spfc_ds)),
+                  teach_R = 
+                    sum(as.numeric(educatordf$teach_R)),
+                  teach_tidyverse = 
+                    sum(as.numeric(educatordf$teach_tidyverse)),
+                  teach_PH = 
+                    sum(as.numeric(educatordf$teach_PH)),
+                  teach_spfc_PH = 
+                    sum(as.numeric(educatordf$teach_spfc_PH))
+                  )
+
+
+ggplot(teach_int_sum, aes()) +
+  geom_bar() + 
+  scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
+  labs(x = "Subject", y = "Count", title = "Educator Teaching Interests") + 
+  guides(fill = "none")
 ```
 
 
