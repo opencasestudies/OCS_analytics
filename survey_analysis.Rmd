@@ -1699,6 +1699,7 @@ teach_int_sum = educatordf %>% select(starts_with("teach_")) %>%
     )
   )
   
+# plot: 
 
 ggplot(teach_int_sum, aes(x = fct_reorder(as.factor(name), specific), y = percent, 
                           fill = topic)) +
