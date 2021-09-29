@@ -1642,10 +1642,21 @@ if(0 %in% checks){
 ## Analysis & Visualization
 
 ```{r}
-theme_set(theme_linedraw() + theme(axis.text = element_text(size = 11, color = "black"),
-                                  axis.title = element_text(size = 12, color = "black"),
-                                  plot.title = element_text(hjust = .5))
+theme_set(theme_linedraw() + 
+            theme(axis.text = element_text(size = 11, 
+                                           color = "black"),
+                  axis.title = element_text(size = 12, 
+                                            color = "black"),
+                  plot.title = element_text(hjust = .5))
           )
+```
+
+
+```{r, educator_stats}
+# educator future teach:
+future_teach = educatordf %>% drop_na(future_teach)
+future_teach %>% count(future_teach, name = "num") %>% 
+  mutate(percent = 100*num/nrow(future_teach))
 ```
 
 
