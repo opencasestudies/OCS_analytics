@@ -1,0 +1,64 @@
+---
+title: "OCSdata_analysis"
+author: "Michael Breshock"
+date: "9/20/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r}
+library(Visualize.CRAN.Downloads)
+library(packageRank)
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+# retrieve data
+packageData <- retrievePckgData("OCSdata", "2021-03-01")
+# select 1st element of the list
+totalDownloads <- packageData[[1]]
+
+# call the plotting fn, with default value of device --> PDF
+staticPlots(totalDownloads)
+# set output to the screen
+staticPlots(totalDownloads,combinePlts=TRUE, device='PNG')
+```
+
+```{r}
+downloads = cranDownloads(packages = "OCSdata", from = "2021-03-01", to = Sys.Date())
+downloads = tibble(downloads$cranlogs.data) %>%
+  mutate(day = as.numeric(c(1:length(date))))
+downloads
+```
+```{r}
+theme_set(theme_minimal() + theme(axis.text = element_text(size = 11, color = "black"),
+                                  axis.title = element_text(size = 12, color = "black"),
+                                  plot.title = element_text(hjust = .5))
+          )
+```
+
+```{r}
+p = ggplot(downloads, aes(x = day, y = count)) + geom_point(size = 2)
+
+spline_down = as.data.frame(spline(downloads$day, downloads$count))
+
+p + geom_line(spline_down, mapping = aes(x = x, y = y), 
+                          color = "#4B9B81",
+                          linetype = "dashed", size = 1) +
+  labs(x = "Number of Days (since release)", y = "Number of Downloads", 
+       title = "Number of Downloads per Day Since Release")
+
+```
+
+```{r}
+ggplot(downloads, aes(x = day, y = cumulative)) + 
+  geom_line(size = 2, color = "#4B9B81") +
+    labs(x = "Number of Days (since release)", y = "Total Downloads", 
+       title = "Cumulative Number of Downloads Since Release")
+```
+
+
+
