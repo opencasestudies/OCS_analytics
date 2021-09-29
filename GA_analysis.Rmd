@@ -13,14 +13,13 @@ library(tidyverse)
 ```
 
 ```{r}
-
-ocs_property_id = 256923228
-yesterday = Sys.Date() - 1
-ses_wk_ctg = google_analytics(ocs_property_id,
-          date_range = c("2021-01-01", yesterday),
-          metrics = c("sessions"),
-          dimensions = c("day", "deviceCategory"))
-head(ses_wk_ctg)
+# ocs_property_id = 256923228
+# yesterday = Sys.Date() - 1
+# ses_wk_ctg = google_analytics(ocs_property_id,
+#           date_range = c("2021-01-01", yesterday),
+#           metrics = c("sessions"),
+#           dimensions = c("day", "deviceCategory"))
+# head(ses_wk_ctg)
 ```
 
 ```{r}
@@ -74,6 +73,7 @@ pivot_longer(users_wk, c(totalUsers, newUsers, active7DayUsers),
   ggplot(aes(x = week, y = count)) +
   geom_line(aes(color = metric))
 ```
+
 ```{r}
 users_date = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
@@ -117,6 +117,171 @@ cities
 
 city: The city from which the user activity originated.
 
+```{r, browser}
+ocs_property_id = 256923228
+browsers = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("browser"))
+head(browsers)
+```
+
+```{r, dhm}
+ocs_property_id = 256923228
+dhm = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("hour","minute"), limit = 1000)
+dhm
+```
+
+```{r, mediums}
+ocs_property_id = 256923228
+mediums = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("medium"))
+mediums
+```
+
+```{r, url}
+ocs_property_id = 256923228
+urls = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("fullPageUrl"))
+urls
+```
+
+```{r, langauge}
+ocs_property_id = 256923228
+language = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("newUsers"),
+          dimensions = c("language"))
+language
+```
+
+```{r, linkUrl}
+ocs_property_id = 256923228
+linkUrl = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("linkUrl"))
+linkUrl
+```
+
+```{r, OSversion}
+ocs_property_id = 256923228
+OSversion = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("operatingSystemWithVersion", "operatingSystem"))
+OSversion
+```
+
+```{r, pageReferrer}
+ocs_property_id = 256923228
+pageReferrer = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("pageReferrer"))
+pageReferrer
+```
+
+```{r, pagetitle}
+ocs_property_id = 256923228
+pagetitle = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("pageTitle"))
+case_studies = c("School Shootings in the United States", 
+                 "Disparities in Youth Disconnection",
+                 "Opioids in United States",
+                 "Vaping Behaviors in American Youth",
+                 "Mental Health of American Youth", 
+                 "Exploring global patterns of obesity across rural and urban regions",  "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws", 
+                 "Exploring CO2 emissions across time",
+                 "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws Part 1", 
+                 "Exploring global patterns of dietary behaviors associated with health risk",
+                 "Predicting Annual Air Pollution")
+pages = pagetitle %>% mutate(
+  ocs = str_remove(pageTitle, pattern = "Open Case Studies: ") 
+) %>% 
+  filter(ocs %in% case_studies) %>% 
+  mutate(
+    static = str_count(pageTitle, "Open Case Studies: ")) %>%
+  mutate(
+    code = case_when(
+      ocs == "School Shootings in the United States" ~ "School Shootings", 
+      ocs == "Disparities in Youth Disconnection" ~ "Youth Disconnection", 
+      ocs == "Opioids in United States" ~ "Opiods",
+      ocs == "Vaping Behaviors in American Youth" ~ "Vaping",
+      ocs == "Mental Health of American Youth" ~ "Mental Health",
+      ocs == "Exploring global patterns of obesity across rural and urban regions" ~ "Obesity", 
+      ocs == "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws" ~ "RTC Analysis",
+      ocs == "Exploring CO2 emissions across time" ~ "CO2 Emissions",
+      ocs == "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws Part 1" ~ "RTC Wrangling",
+      ocs == "Exploring global patterns of dietary behaviors associated with health risk" ~ "Diet",
+      ocs == "Predicting Annual Air Pollution" ~ "Air Pollution"
+    )
+  )
+pages
+```
+
+```{r, percentScrolled}
+ocs_property_id = 256923228
+percentScrolled = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("percentScrolled"))
+percentScrolled
+```
+
+```{r, searchTerm}
+ocs_property_id = 256923228
+searchTerm = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("searchTerm"))
+searchTerm
+```
+
+```{r, sources}
+ocs_property_id = 256923228
+sources = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessions"),
+          dimensions = c("source"))
+sources
+```
+
+```{r, engagedSessions}
+ocs_property_id = 256923228
+engagedSessions = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("engagedSessions", "engagementRate"),
+          dimensions = c("date"), limit = 1000)
+engagedSessions
+```
+
+```{r, screenPageViews}
+ocs_property_id = 256923228
+screenPageViews = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("screenPageViews"),
+          dimensions = c("pageTitle"), limit = 1000)
+screenPageViews
+```
+
+```{r, sessionsPerUser}
+ocs_property_id = 256923228
+sessionsPerUser = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("sessionsPerUser"),
+          dimensions = c("pageTitle"), limit = 1000)
+sessionsPerUser
+```
 
 dimensions of interest:
 - browser
@@ -146,9 +311,9 @@ metrics of interest:
 - engagedSessions, engagementRate
 - screenPageViews
 - sessions, sessionsPerUser
-- 
 
 for users data: use active1Dayusers and newUsers
+
  
 cool figure to make: # of events (or users) per day (events y axis, days x axis)
 have a timeline of project development along the x-axis to view if website traffic was changed at all by project developments. 
