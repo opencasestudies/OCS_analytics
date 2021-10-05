@@ -33,6 +33,7 @@ downloads = tibble(downloads$cranlogs.data) %>%
   mutate(day = as.numeric(c(1:length(date))))
 downloads
 ```
+
 ```{r}
 theme_set(theme_minimal() + theme(axis.text = element_text(size = 11, color = "black"),
                                   axis.title = element_text(size = 12, color = "black"),

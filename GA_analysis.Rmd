@@ -131,7 +131,7 @@ ocs_property_id = 256923228
 dhm = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("hour","minute"), limit = 1000)
+          dimensions = c("hour"), limit = 1000)
 dhm
 ```
 
@@ -176,7 +176,7 @@ ocs_property_id = 256923228
 OSversion = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("operatingSystemWithVersion", "operatingSystem"))
+          dimensions = c("operatingSystem"))
 OSversion
 ```
 
@@ -189,6 +189,8 @@ pageReferrer = ga_data(ocs_property_id,
 pageReferrer
 ```
 
+
+look into collapsing duplicates functions / group_by!
 ```{r, pagetitle}
 ocs_property_id = 256923228
 pagetitle = ga_data(ocs_property_id,
@@ -225,7 +227,8 @@ pages = pagetitle %>% mutate(
       ocs == "Exploring global patterns of dietary behaviors associated with health risk" ~ "Diet",
       ocs == "Predicting Annual Air Pollution" ~ "Air Pollution"
     )
-  )
+  ) %>% group_by(code) %>% 
+  mutate(ocs_sum = sum(sessions)) %>% select(code, ocs_sum) %>% distinct()
 pages
 ```
 

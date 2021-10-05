@@ -1655,8 +1655,28 @@ theme_set(theme_linedraw() +
 ```{r, educator_stats}
 # educator future teach:
 future_teach = educatordf %>% drop_na(future_teach)
-future_teach %>% count(future_teach, name = "num") %>% 
-  mutate(percent = 100*num/nrow(future_teach))
+num_responses = nrow(future_teach)
+future_teach %>% count(future_teach, name = "num_teachers") %>% 
+  mutate(percent = 100*num_teachers/num_responses)
+```
+
+```{r, type_student_taught}
+teach_stud_sum = educatordf %>% select(starts_with("teach_")) %>% 
+  select(contains(c("grad", "HS", "middle", "ugrad"))) %>% 
+  mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything(), names_to = "type", values_to = "count") %>%
+  mutate(percent = 100*count/nrow(educatordf))
+
+ggplot(teach_stud_sum, aes(x = type, y = percent, fill = type)) +
+  geom_col() + scale_fill_viridis_d() + 
+ # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
+  labs(x = "Student Type", y = "Percent", 
+       title = "Types of Students Taught by Educators") + 
+  guides(fill = "none") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,100))
 ```
 
 
@@ -1679,7 +1699,9 @@ teach_int_sum = educatordf %>% select(starts_with("teach_")) %>%
   select(-contains(c("grad", "HS", "middle", "enjoy"))) %>% 
   mutate(across(, ~as.numeric(.))) %>%
   summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
-  pivot_longer(cols = everything(), names_to = "topic", values_to = "count")
+  pivot_longer(cols = everything(), names_to = "topic", values_to = "count") %>%
+  mutate(percent = round(count/nrow(educatordf)*100))
+  
 
 ggplot(teach_int_sum, aes(x = topic, y = count, fill = topic)) +
   geom_col() + scale_fill_viridis_d() + 
