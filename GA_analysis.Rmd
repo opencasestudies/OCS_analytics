@@ -10,24 +10,27 @@ knitr::opts_chunk$set(echo = TRUE)
 library(googleAnalyticsR)
 library(ggplot2)
 library(tidyverse)
+library(magrittr)
 ```
 
 ```{r}
-# ocs_property_id = 256923228
-# yesterday = Sys.Date() - 1
-# ses_wk_ctg = google_analytics(ocs_property_id,
-#           date_range = c("2021-01-01", yesterday),
-#           metrics = c("sessions"),
-#           dimensions = c("day", "deviceCategory"))
-# head(ses_wk_ctg)
+theme_set(theme_linedraw() + 
+            theme(axis.text = element_text(size = 11, 
+                                           color = "black"),
+                  axis.title = element_text(size = 12, 
+                                            color = "black"),
+                  plot.title = element_text(hjust = .5))
+          )
 ```
 
 ```{r}
-# ocsmeta = ga_meta("data", propertyId = 256923228)
+ocs_property_id = 256923228
 ses_wk_ctg = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
           dimensions = c("deviceCategory"))
+ses_wk_ctg %<>% mutate(percent = round(100*sessions/sum(sessions), 2),
+                       total = sum(sessions)) 
 
 ggplot(ses_wk_ctg, aes(x = as.factor(deviceCategory), y = sessions)) +
   geom_bar(stat = "identity")
@@ -78,21 +81,25 @@ pivot_longer(users_wk, c(totalUsers, newUsers, active7DayUsers),
 users_date = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("totalUsers", "newUsers", "eventCount",
-                      "active7DayUsers", "userEngagementDuration"),
-          dimensions = c("date"), limit = 400) %>% 
+                      "active1DayUsers", "userEngagementDuration"),
+          dimensions = c("date"), limit = 1000) %>% 
   mutate(
          avgEngagementDuration = # avg engagement in minutes
-           round(userEngagementDuration/(60*totalUsers)))
+           round(userEngagementDuration/(60*active1DayUsers))) %>%
+  pivot_longer(c(newUsers, active1DayUsers), 
+              names_to = "metric", values_to = "count")
 
-pivot_longer(users_date, c(totalUsers, newUsers, active7DayUsers), 
-             names_to = "metric", values_to = "count") %>%
-  ggplot(aes(x = date, y = count)) +
-  geom_line(aes(color = metric))
+  ggplot(users_date, aes(x = date, y = count, color = metric)) +
+    geom_line() + #scale_color_viridis_d() + 
+    labs(x = "Day", y = "User Count", title = "Open Case Studies Daily New and Active Users")
 ```
 
 ```{r}
-ggplot(users_wk, aes(avgEngagementDuration)) + 
-  geom_bar()
+ggplot(users_date, aes(x = as.factor(avgEngagementDuration), 
+                       fill = as.factor(avgEngagementDuration))) + 
+  geom_bar() + scale_fill_viridis_d() + guides(fill = "none") +
+  labs(x = "Average Engagement Duration (Minutes)", y = "Number of Days", 
+       title = "Count of Daily Average Engagement") 
 ```
 
 
@@ -110,8 +117,8 @@ userEngagementDuration: The total amount of time (in seconds) your website or ap
 ```{r}
 cities = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
-          metrics = c("newUsers"),
-          dimensions = c("cityId", "city"), limit = 1000)
+          metrics = c("sessions"),
+          dimensions = c("country", "city"), limit = 1000)
 cities
 ```
 
