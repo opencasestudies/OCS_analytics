@@ -1980,4 +1980,79 @@ ggplot(famildf2, aes(x = response, y = percent, fill = topic)) +
   scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,80))
 ```
 
+```{r, learning_interests}
+learn_int_stud = studentdf %>% select(starts_with("learn_"))
+learn_int_sl = self_learnerdf %>% select(starts_with("learn_"))
+learn_int = bind_rows(learn_int_stud, learn_int_sl)
+learn_intdf = learn_int %>%
+  mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything(), names_to = "topics", values_to = "count") %>%
+  mutate(percent = 100*count/nrow(learn_int)) %>%
+    mutate(topics = case_when(
+    str_detect(topics, pattern = "learn_stats") == TRUE ~ "Statistics",
+    str_detect(topics, pattern = "learn_ds") == TRUE ~ "Data Science",
+    str_detect(topics, pattern = "learn_PH") == TRUE ~ "Public Health",
+    str_detect(topics, pattern = "_R") == TRUE ~ "R Programming",
+    str_detect(topics, pattern = "_tidyverse") == TRUE ~ "Tidyverse",
+    str_detect(topics, pattern = "_spfc_stats") == TRUE ~ "Specific\n Statistics\n Topic",
+    str_detect(topics, pattern = "_spfc_ds") == TRUE ~ "Specific\n Data Science\n Topic",
+    str_detect(topics, pattern = "_spfc_PH") == TRUE ~ "Specific\n Public Health\n Topic"
+    )
+  )
 
+ggplot(learn_intdf, aes(x = as_factor(topics), y = percent, fill = as_factor(topics))) +
+  geom_col() + scale_fill_viridis_d() + 
+  labs(x = "Topic", y = "Percent", 
+       title = "Student and Self-learner Learning Interests") + 
+  guides(fill = "none") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,100))
+```
+
+```{r, learned_new}
+learn_new_stud = studentdf %>% select(starts_with("learned_new_"), 
+                                      -c("learned_new_all", "learned_new_none"))
+learn_new_sl = self_learnerdf %>% select(starts_with("learned_new_"), 
+                                         -c("learned_new_all", "learned_new_none"))
+learn_new = bind_rows(learn_new_stud, learn_new_sl) %>% na_if("NA") %>% drop_na() 
+learn_newdf = learn_new %>% mutate(across(, ~as.numeric(.))) 
+learn_newdf[3,] = learn_newdf[3,] + 1 # adding 1 to each for "all of the above" response
+learn_newdf = learn_newdf %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything(), names_to = "topics", values_to = "count") %>%
+  mutate(percent = 100*count/nrow(learn_new)) %>%
+    mutate(topics = case_when(
+    str_detect(topics, pattern = "new_stats") == TRUE ~ "Statistics",
+    str_detect(topics, pattern = "Rstats") == TRUE ~ "RStats",
+    str_detect(topics, pattern = "import") == TRUE ~ "Data Import",
+    str_detect(topics, pattern = "viz") == TRUE ~ "Data Visualization",
+    str_detect(topics, pattern = "wrang") == TRUE ~ "Data Wrangling",
+    str_detect(topics, pattern = "comm") == TRUE ~ "Data Communication",
+    str_detect(topics, pattern = "new_PH") == TRUE ~ "Public Health"
+    )
+  )
+
+ggplot(learn_newdf, aes(x = as_factor(topics), y = percent, fill = as_factor(topics))) +
+  geom_col() + scale_fill_viridis_d() + 
+  labs(x = "Topic", y = "Percent of Responders", 
+       title = "Students and Self-learners Learned Something New About:") + 
+  guides(fill = "none") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,100))
+```
+```{r, how_found}
+howfound = studentdf %>% select(how_found)
+num_responses = nrow(howfound)
+howfound %>% count(how_found, name = "num_students") %>% 
+  mutate(percent = 100*num_students/num_responses)
+```
+
+```{r, how_found}
+studtype = studentdf %>% select(student_type)
+num_responses = nrow(studtype)
+studtype %>% count(student_type, name = "num_students") %>% 
+  mutate(percent = 100*num_students/num_responses)
+```
