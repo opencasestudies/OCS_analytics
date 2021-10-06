@@ -1754,19 +1754,40 @@ ggplot(courses_taught_sum, aes(x = subject, y = percent, fill = subject)) +
 ```
 
 ```{r, case_studies}
-cs_educators = educatordf %>% select(responder_category, starts_with("looked_at_")) %>%
-  select(-looked_at_none)
-cs_students = studentdf %>% select(responder_category, starts_with("looked_at_"))
-cs_self_learners = self_learnerdf %>% select(responder_category, starts_with("looked_at_"))
-looked_at_cs = bind_rows(cs_educators, cs_students, cs_self_learners) %>%
-  na_if("NA") 
-looked_at_cs = filter(looked_at_cs, rowSums(is.na(looked_at_cs)) != (ncol(looked_at_cs)-1))
+cs_educators = educatordf %>% select(starts_with("looked_at_")) %>%
+  select(-looked_at_none) %>% na_if("NA") 
+cs_students = studentdf %>% select(starts_with("looked_at_")) %>% na_if("NA") 
+cs_self_learners = self_learnerdf %>% select(starts_with("looked_at_")) %>% na_if("NA") 
+looked_at_cs = bind_rows(cs_educators, cs_students, cs_self_learners)
 
-looked_at_cs_counts = looked_at_cs %>% mutate(across(, ~as.numeric(.))) %>%
+looked_at_cs_all = looked_at_cs %>% mutate(across(, ~as.numeric(.))) %>%
   summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
-  pivot_longer(cols = -responder_category, names_to = "case_study", values_to = "count") %>%
+  pivot_longer(cols = everything(), names_to = "case_study", values_to = "count") %>%
   mutate(percent = 100*count/nrow(looked_at_cs)) %>%
-    mutate(case_study = case_when(
+  mutate(responder_category = "All")
+
+
+looked_at_cs_edu = cs_educators %>% mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>%
+  pivot_longer(cols = everything(), names_to = "case_study", values_to = "count") %>%
+  mutate(percent = 100*count/nrow(cs_educators)) %>%
+  mutate(responder_category = "Educator")
+
+looked_at_cs_stud = cs_students %>% mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>%
+  pivot_longer(cols = everything(), names_to = "case_study", values_to = "count") %>%
+  mutate(percent = 100*count/nrow(cs_students)) %>%
+  mutate(responder_category = "Student")
+
+looked_at_cs_sl = cs_self_learners %>% mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>%
+  pivot_longer(cols = everything(), names_to = "case_study", values_to = "count") %>%
+  mutate(percent = 100*count/nrow(cs_self_learners)) %>%
+  mutate(responder_category = "Self-learner")
+
+looked_at_cs_counts = bind_rows(looked_at_cs_all, looked_at_cs_edu, looked_at_cs_stud,
+                                looked_at_cs_sl) %>%
+  mutate(case_study = case_when(
     str_detect(case_study, pattern = "obesity") == TRUE ~ "Obesity",
     str_detect(case_study, pattern = "diet") == TRUE ~ "Diet",
     str_detect(case_study, pattern = "school_shootings") == TRUE ~ "School Shootings",
@@ -1779,41 +1800,184 @@ looked_at_cs_counts = looked_at_cs %>% mutate(across(, ~as.numeric(.))) %>%
     str_detect(case_study, pattern = "opioids") == TRUE ~ "Opioids",
     str_detect(case_study, pattern = "vaping") == TRUE ~ "Vaping"
     )
-  )
+  ) %>% mutate(percent = round(percent))
 
-looked_at_cs_counts
+ggplot(looked_at_cs_counts, aes(x = case_study, y = percent, fill = responder_category)) +
+  geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
+  labs(x = "Case Study", y = "Percent", 
+       title = "Percent of Case Studies Looked at By Responders") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  guides(fill = guide_legend(title = "Category")) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,45))
 ```
 
-
-**ignore:**
 
 ```{r}
-surveydf = survey %>% rename(date = Timestamp)
-attr(surveydf$date, "label") = "The date when the responder submitted the survey."
+rec_educators = educatordf %>% select(recommend)
+rec_students = studentdf %>% select(recommend)
+rec_self_learners = self_learnerdf %>% select(recommend) %>% drop_na()
+recommend = bind_rows(rec_educators, rec_students, rec_self_learners) %>% drop_na()
 
-surveydf = surveydf %>% rename(category = `How would you describe yourself (choose best option)? Note that you can say  "wish not to say"  for the "other" category.`)
-attr(surveydf$category, "label") = 'How would you describe yourself (choose best option)? Note that you can say  "wish not to say"  for the "other" category.'
+rec3 = round(100*sum(recommend == 3)/nrow(recommend), 1)
+rec4 = round(100*sum(recommend == 4)/nrow(recommend), 1)
+rec5 = round(100*sum(recommend == 5)/nrow(recommend), 1)
 
-surveydf = surveydf %>% rename(intended_course_use = `Do you intend to use a case study (or part of a case study) in one of your classes?`)
-attr(surveydf$intended_course_use, "label") = "Do you intend to use a case study (or part of a case study) in one of your classes?"
+recdf = tibble(response = c("3", "4", "5"), percent = c(rec3, rec4, rec5), category = "All")
 
-surveydf = surveydf %>% rename(teach_future = `Are you interested in using our case study materials or the data from one of our case studies to teach in the future?`)
-attr(surveydf$teach_future, "label") = "Are you interested in using our case study materials or the data from one of our case studies to teach in the future?"
+edurec3 = round(100*sum(rec_educators == 3)/nrow(rec_educators), 1)
+edurec4 = round(100*sum(rec_educators == 4)/nrow(rec_educators), 1)
+edurec5 = round(100*sum(rec_educators == 5)/nrow(rec_educators), 1)
 
-surveydf = surveydf %>% rename(feedback1 = 5)
-attr(surveydf$feedback1, "label") = "Please provide any additional feedback you might have....5"
+edurecdf = tibble(response = c("3", "4", "5"), 
+                  percent = c(edurec3, edurec4, edurec5), category = "Educator")
 
-surveydf = surveydf %>% rename(feedback2 = 6)
-attr(surveydf$feedback2, "label") = "Please provide any additional feedback you might have....6"
+studrec3 = round(100*sum(rec_students == 3)/nrow(rec_students), 1)
+studrec4 = round(100*sum(rec_students == 4)/nrow(rec_students), 1)
+studrec5 = round(100*sum(rec_students == 5)/nrow(rec_students), 1)
 
-surveydf = surveydf %>% rename(feedback3 = 7)
-attr(surveydf$feedback3, "label") = "Please provide any feedback you might have....7"
+studrecdf = tibble(response = c("3", "4", "5"), 
+                  percent = c(studrec3, studrec4, studrec5), category = "Student")
 
-surveydf = surveydf %>% rename(useful = `How useful did you find the case studies/data?`)
-attr(surveydf$useful, "label") = "How useful did you find the case studies/data?"
+slrec3 = round(100*sum(rec_self_learners == 3)/nrow(rec_self_learners), 1)
+slrec4 = round(100*sum(rec_self_learners == 4)/nrow(rec_self_learners), 1)
+slrec5 = round(100*sum(rec_self_learners == 5)/nrow(rec_self_learners), 1)
 
-surveydf = surveydf %>% rename(refer_back = 11)
-attr(surveydf$refer_back, "label") = "How likely are you to refer back to the case study/studies in the future?...11"
+slrecdf = tibble(response = c("3", "4", "5"), 
+                  percent = c(slrec3, slrec4, slrec5), category = "Self-learner")
 
+rec_totals = bind_rows(recdf, edurecdf, studrecdf, slrecdf)
+
+ggplot(rec_totals, aes(x = response, y = percent, fill = category)) +
+  geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
+  labs(x = "Rank (out of 5)", y = "Percent of Responses", 
+       title = "How likely are you to recommend the case studies to others?") + 
+  guides(fill = guide_legend(title = "Category")) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,80))
 ```
+
+```{r, parts_interested}
+parts_interest_sum = educatordf %>% select(starts_with("interest_")) %>% 
+  select(contains(c("data", "part", "full", "combination"))) %>% 
+  mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything(), names_to = "parts", values_to = "count") %>%
+  mutate(percent = 100*count/nrow(educatordf)) %>%
+    mutate(parts = case_when(
+    str_detect(parts, pattern = "data") == TRUE ~ "Data Only",
+    str_detect(parts, pattern = "part") == TRUE ~ "Part of Case Study",
+    str_detect(parts, pattern = "full") == TRUE ~ "Full Case Study",
+    str_detect(parts, pattern = "combination") == TRUE ~ "Combination"
+    )
+  )
+
+ggplot(parts_interest_sum, aes(x = parts, y = percent, fill = parts)) +
+  geom_col() + scale_fill_viridis_d() + 
+  labs(x = "Material", y = "Percent", 
+       title = "Case Study Materials of Interest for Educators") + 
+  guides(fill = "none") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,75))
+```
+
+```{r, sections_interested}
+sect_interest_sum = educatordf %>% select(ends_with("_interest")) %>%
+  select(-c(ocs_interest, materials_interest)) %>% na_if("NA") %>% drop_na() %>%
+  mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything(), names_to = "sections", values_to = "count") %>%
+  mutate(percent = 100*count/nrow(educatordf)) %>%
+    mutate(sections = case_when(
+    str_detect(sections, pattern = "motivation") == TRUE ~ "Motivation/Context",
+    str_detect(sections, pattern = "import") == TRUE ~ "Import",
+    str_detect(sections, pattern = "wrangling") == TRUE ~ "Wrangling",
+    str_detect(sections, pattern = "exploration") == TRUE ~ "Exploration",
+    str_detect(sections, pattern = "visualization") == TRUE ~ "Visualization",
+    str_detect(sections, pattern = "analysis") == TRUE ~ "Analysis",
+    str_detect(sections, pattern = "data") == TRUE ~ "Data",
+    str_detect(sections, pattern = "all_") == TRUE ~ "All Sections"
+    )
+  )
+
+ggplot(sect_interest_sum, aes(x = sections, y = percent, fill = sections)) +
+  geom_col() + scale_fill_viridis_d() + 
+  labs(x = "Section", y = "Percent", 
+       title = "Case Study Sections of Interest for Educators") + 
+  guides(fill = "none") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,75))
+```
+
+```{r, refer_back}
+refer_back_stud = studentdf %>% select(refer_back) %>% drop_na()
+refer_back_sl = self_learnerdf %>% select(refer_back) %>% drop_na()
+refer_back = bind_rows(refer_back_stud, refer_back_sl)
+referdf = refer_back %>% group_by(refer_back) %>% summarise(count = n()) %>% 
+  mutate(percent = 100*count/sum(count))
+
+ggplot(referdf, aes(x = as.factor(refer_back), y = percent, fill = as.factor(refer_back))) +
+  geom_col() + scale_fill_viridis_d() + 
+  labs(x = "Rank (out of 5)", y = "Percent", 
+       title = "How likely are you to refer back to the case studies in the future?") + 
+  guides(fill = "none") + scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,50))
+```
+
+```{r, familiarity}
+famil_stud = studentdf %>% select(starts_with("famil_")) %>% drop_na()
+famil_sl = self_learnerdf %>% select(starts_with("famil_")) %>% drop_na() 
+familiarity = bind_rows(famil_stud, famil_sl)
+
+famstats = familiarity %>%
+  group_by(famil_stats) %>% summarise(count = n()) %>%
+  mutate(percent = 100*count/sum(count)) %>% mutate(topic = "Statistics") %>%
+  rename(response = famil_stats) %>% mutate(response = as.factor(response))
+
+famPH = familiarity %>%
+  group_by(famil_PH) %>% summarise(count = n()) %>% 
+  mutate(percent = 100*count/sum(count)) %>% mutate(topic = "Public Health") %>%
+  rename(response = famil_PH) %>% mutate(response = as.factor(response))
+
+famDS = familiarity %>%
+  group_by(famil_DS) %>% summarise(count = n()) %>% 
+  mutate(percent = 100*count/sum(count)) %>% mutate(topic = "Data Science") %>%
+  rename(response = famil_DS) %>% mutate(response = as.factor(response))
+
+famtverse = familiarity %>%
+  group_by(famil_tidyverse) %>% summarise(count = n()) %>% 
+  mutate(percent = 100*count/sum(count)) %>% mutate(topic = "Tidyverse") %>%
+  rename(response = famil_tidyverse) %>% mutate(response = as.factor(response))
+
+famnonR = familiarity %>%
+  group_by(famil_nonR) %>% summarise(count = n()) %>% 
+  mutate(percent = 100*count/sum(count)) %>% mutate(topic = "Other Programming") %>%
+  rename(response = famil_nonR) %>% mutate(response = as.factor(response))
+
+famR = familiarity %>%
+  group_by(famil_R) %>% summarise(count = n()) %>% 
+  mutate(percent = 100*count/sum(count)) %>% mutate(topic = "R Programming") %>%
+  rename(response = famil_R) %>% mutate(response = as.factor(response))
+
+famildf1 = bind_rows(famstats, famPH, famDS)
+famildf2 = bind_rows(famtverse, famnonR, famR) %>% 
+  mutate(response = fct_inseq(response))
+
+ggplot(famildf1, aes(x = response, y = percent, fill = topic)) +
+  geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
+  labs(x = "Rank (out of 4)", y = "Percent of Responses", 
+       title = "Student and Self-Learner Familiarity with Case Study Topics") + 
+  guides(fill = guide_legend(title = "Topic")) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,75))
+```
+
+```{r, familiarity2}
+ggplot(famildf2, aes(x = response, y = percent, fill = topic)) +
+  geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
+  labs(x = "Rank (out of 5)", y = "Percent of Responses", 
+       title = "Student and Self-Learner Familiarity with Case Study Skills") + 
+  guides(fill = guide_legend(title = "Skill")) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,80))
+```
+
 
