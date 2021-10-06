@@ -1652,6 +1652,15 @@ theme_set(theme_linedraw() +
 ```
 
 
+```{r, responder_category}
+ggplot(consented, aes(x = forcats::fct_infreq(as.factor(responder_category)), fill = responder_category)) +
+  geom_bar(color = "black") + scale_fill_viridis_d() +
+  # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
+  labs(x = "User Category", y = "Count", title = "Count of Survey Responders by Category") + 
+  guides(fill = "none")
+    
+```
+
 ```{r, educator_stats}
 # educator future teach:
 future_teach = educatordf %>% drop_na(future_teach)
@@ -1662,55 +1671,30 @@ future_teach %>% count(future_teach, name = "num_teachers") %>%
 
 ```{r, type_student_taught}
 teach_stud_sum = educatordf %>% select(starts_with("teach_")) %>% 
-  select(contains(c("grad", "HS", "middle", "ugrad"))) %>% 
+  select(contains(c("ugrad", "grad", "middle", "HS"))) %>% 
   mutate(across(, ~as.numeric(.))) %>%
   summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
   pivot_longer(cols = everything(), names_to = "type", values_to = "count") %>%
-  mutate(percent = 100*count/nrow(educatordf))
+  mutate(percent = 100*count/nrow(educatordf)) %>%
+    mutate(type = case_when(
+    str_detect(type, pattern = "ugrad") == TRUE ~ "Undergraduate",
+    str_detect(type, pattern = "grad") == TRUE ~ "Graduate",
+    str_detect(type, pattern = "middle") == TRUE ~ "Middle School",
+    str_detect(type, pattern = "HS") == TRUE ~ "High School"
+    )
+  )
 
 ggplot(teach_stud_sum, aes(x = type, y = percent, fill = type)) +
   geom_col() + scale_fill_viridis_d() + 
- # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
   labs(x = "Student Type", y = "Percent", 
        title = "Types of Students Taught by Educators") + 
   guides(fill = "none") + 
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
   scale_y_continuous(labels = function(x) paste0(x, "%")) + 
-  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,100))
-```
-
-
-```{r, responder_category}
-ggplot(consented, aes(x = forcats::fct_infreq(as.factor(responder_category)), fill = responder_category)) +
-  geom_bar(color = "black") + scale_fill_viridis_d() +
-  # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
-  labs(x = "User Category", y = "Count", title = "Count of Survey Responders by Category") + 
-  guides(fill = "none")
-    
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,75))
 ```
 
 ```{r, educator_teaching_interests}
-# teach_int_sum = educatordf %>% select(starts_with("teach_")) %>% 
-#   select(-contains(c("grad", "HS", "middle", "enjoy"))) %>%
-#   mutate(across(, ~as.numeric(.))) %>%
-#   colSums() %>% as.data.frame() %>% rownames_to_column()
-
-teach_int_sum = educatordf %>% select(starts_with("teach_")) %>% 
-  select(-contains(c("grad", "HS", "middle", "enjoy"))) %>% 
-  mutate(across(, ~as.numeric(.))) %>%
-  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
-  pivot_longer(cols = everything(), names_to = "topic", values_to = "count") %>%
-  mutate(percent = round(count/nrow(educatordf)*100))
-  
-
-ggplot(teach_int_sum, aes(x = topic, y = count, fill = topic)) +
-  geom_col() + scale_fill_viridis_d() + 
- # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
-  labs(x = "Subject", y = "Count", title = "Educator Teaching Interests") + 
-  guides(fill = "none") + theme(axis.text.x = element_text(angle = 60, vjust = 0.5))
-```
-
-```{r}
 teach_int_sum = educatordf %>% select(starts_with("teach_")) %>% 
   select(-contains(c("grad", "HS", "middle", "enjoy"))) %>% 
   mutate(across(, ~as.numeric(.))) %>%
@@ -1737,13 +1721,69 @@ teach_int_sum = educatordf %>% select(starts_with("teach_")) %>%
 ggplot(teach_int_sum, aes(x = fct_reorder(as.factor(name), specific), y = percent, 
                           fill = topic)) +
   geom_col() + scale_fill_viridis_d() + 
- # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
   labs(x = "Subject", y = "Percent of Responders", title = "Educator Teaching Interests") + 
   guides(fill = "none") + theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
   scale_y_continuous(labels = function(x) paste0(x, "%")) + 
   geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + 
   ylim(c(0,100))
 ```
+
+```{r, courses_taught}
+courses_taught_sum = educatordf %>% select(starts_with("would_use_")) %>% 
+  select(contains(c("PH", "stats", "math", "DS"))) %>% 
+  mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything(), names_to = "subject", values_to = "count") %>%
+  mutate(percent = 100*count/nrow(educatordf)) %>%
+    mutate(subject = case_when(
+    str_detect(subject, pattern = "PH") == TRUE ~ "Public Health",
+    str_detect(subject, pattern = "stats") == TRUE ~ "Statistics",
+    str_detect(subject, pattern = "math") == TRUE ~ "Mathematics",
+    str_detect(subject, pattern = "DS") == TRUE ~ "Data Science"
+    )
+  )
+
+ggplot(courses_taught_sum, aes(x = subject, y = percent, fill = subject)) +
+  geom_col() + scale_fill_viridis_d() + 
+  labs(x = "Course Subject", y = "Percent", 
+       title = "Courses Taught by Educators") + 
+  guides(fill = "none") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,100))
+```
+
+```{r, case_studies}
+cs_educators = educatordf %>% select(responder_category, starts_with("looked_at_")) %>%
+  select(-looked_at_none)
+cs_students = studentdf %>% select(responder_category, starts_with("looked_at_"))
+cs_self_learners = self_learnerdf %>% select(responder_category, starts_with("looked_at_"))
+looked_at_cs = bind_rows(cs_educators, cs_students, cs_self_learners) %>%
+  na_if("NA") 
+looked_at_cs = filter(looked_at_cs, rowSums(is.na(looked_at_cs)) != (ncol(looked_at_cs)-1))
+
+looked_at_cs_counts = looked_at_cs %>% mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
+  pivot_longer(cols = -responder_category, names_to = "case_study", values_to = "count") %>%
+  mutate(percent = 100*count/nrow(looked_at_cs)) %>%
+    mutate(case_study = case_when(
+    str_detect(case_study, pattern = "obesity") == TRUE ~ "Obesity",
+    str_detect(case_study, pattern = "diet") == TRUE ~ "Diet",
+    str_detect(case_study, pattern = "school_shootings") == TRUE ~ "School Shootings",
+    str_detect(case_study, pattern = "RTC_wrangling") == TRUE ~ "RTC Wrangling",
+    str_detect(case_study, pattern = "RTC_analysis") == TRUE ~ "RTC Analysis",
+    str_detect(case_study, pattern = "air_pollution") == TRUE ~ "Air Pollution",
+    str_detect(case_study, pattern = "co2_emissions") == TRUE ~ "CO2 Emissions",
+    str_detect(case_study, pattern = "youth_disconnection") == TRUE ~ "Youth Disconnection",
+    str_detect(case_study, pattern = "mental_health") == TRUE ~ "Youth Mental Health",
+    str_detect(case_study, pattern = "opioids") == TRUE ~ "Opioids",
+    str_detect(case_study, pattern = "vaping") == TRUE ~ "Vaping"
+    )
+  )
+
+looked_at_cs_counts
+```
+
 
 **ignore:**
 
