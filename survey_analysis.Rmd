@@ -76,7 +76,7 @@ https://www.alexcernat.com/easy-way-to-make-a-codebook-in-r/
 ### changing column/variable names, saving old name (the question posed in survey) as attribute label, shortening answers
 
 educator:
-```{r}
+```{r educatordf}
 educatordf = educator %>% 
   rename(future_teach = 
            `Are you interested in using our case study materials or the data from one of our case studies to teach in the future?`)
@@ -827,7 +827,7 @@ attr(educatordf$how_different_typical, "label") =
 ```
 
 checking for missed questions; if no missed questions, display the codebook
-```{r}
+```{r educator_codebook}
 educator_codebook = map_df(educatordf, function(x) attributes(x)$label) %>%
   gather(key = Code, value = Label)
 if(nrow(educator_codebook) == ncol(educator)){
@@ -842,7 +842,7 @@ if(nrow(educator_codebook) == ncol(educator)){
 ```
 
 student:
-```{r}
+```{r studentdf}
 studentdf = student %>% 
   rename(feedback1 = 
            `Please provide any additional feedback you might have....6`)
@@ -1228,7 +1228,7 @@ attr(studentdf$usefulness, "label") =
 ```
 
 checking for missed questions; if no missed questions, display the data frame
-```{r}
+```{r student_codebook}
 student_codebook = map_df(studentdf, function(x) attributes(x)$label) %>%
   gather(key = Code, value = Label)
 if(nrow(student_codebook) == ncol(student)){
@@ -1245,7 +1245,7 @@ if(nrow(student_codebook) == ncol(student)){
 
 
 self_learner: 
-```{r}
+```{r self_learnerdf}
 self_learnerdf = self_learner %>% 
   rename(learning_interests = 
            `What specifically brought you to the case studies? (select all that apply)...31`)
@@ -1613,7 +1613,7 @@ attr(self_learnerdf$famil_nonR, "label") =
 ```
 
 checking for missed questions; if no missed questions, display the data frame
-```{r}
+```{r self_learner_codebook}
 self_learner_codebook = map_df(self_learnerdf, function(x) attributes(x)$label) %>%
   gather(key = Code, value = Label)
 if(nrow(self_learner_codebook) == ncol(self_learner)){
@@ -1629,7 +1629,7 @@ if(nrow(self_learner_codebook) == ncol(self_learner)){
 
 if checks passed for all three data frames, then create workbook with each
 codebook as a seperate sheet:
-```{r}
+```{r write_codebook}
 checks = c(student_check, educator_check, self_learner_check)
 if(0 %in% checks){
   print("At least one check failed.")
@@ -1643,7 +1643,7 @@ if(0 %in% checks){
 
 ## Analysis & Visualization
 
-```{r}
+```{r set_theme}
 theme_set(theme_linedraw() + 
             theme(axis.text = element_text(size = 11, 
                                            color = "black"),
@@ -1654,7 +1654,7 @@ theme_set(theme_linedraw() +
 ```
 
 
-```{r, responder_category}
+```{r responder_category}
 ggplot(consented, aes(x = forcats::fct_infreq(as.factor(responder_category)), fill = responder_category)) +
   geom_bar(color = "black") + scale_fill_viridis_d() +
   # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
@@ -1664,7 +1664,7 @@ ggplot(consented, aes(x = forcats::fct_infreq(as.factor(responder_category)), fi
     
 ```
 
-```{r, educator_stats}
+```{r educator_stats}
 # educator future teach:
 future_teach = educatordf %>% drop_na(future_teach)
 num_responses = nrow(future_teach)
@@ -1672,7 +1672,7 @@ future_teach %>% count(future_teach, name = "num_teachers") %>%
   mutate(percent = 100*num_teachers/num_responses)
 ```
 
-```{r, type_student_taught}
+```{r type_student_taught}
 teach_stud_sum = educatordf %>% select(starts_with("teach_")) %>% 
   select(contains(c("ugrad", "grad", "middle", "HS"))) %>% 
   mutate(across(, ~as.numeric(.))) %>%
@@ -1697,7 +1697,7 @@ ggplot(teach_stud_sum, aes(x = type, y = percent, fill = type)) +
   geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,75))
 ```
 
-```{r, educator_teaching_interests}
+```{r educator_teaching_interests}
 teach_int_sum = educatordf %>% select(starts_with("teach_")) %>% 
   select(-contains(c("grad", "HS", "middle", "enjoy"))) %>% 
   mutate(across(, ~as.numeric(.))) %>%
@@ -1709,7 +1709,7 @@ teach_int_sum = educatordf %>% select(starts_with("teach_")) %>%
     str_detect(topic, pattern = "stats") == TRUE ~ "Statistics",
     str_detect(topic, pattern = "ds") == TRUE ~ "Data Science",
     str_detect(topic, pattern = "PH") == TRUE ~ "Public Health",
-    str_detect(topic, pattern = "R") == TRUE ~ "R",
+    str_detect(topic, pattern = "R") == TRUE ~ "R Programming",
     str_detect(topic, pattern = "tidyverse") == TRUE ~ "Tidyverse"
     )
   ) %>% 
