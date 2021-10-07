@@ -3,6 +3,8 @@ title: "survey_analysis"
 author: "Michael Breshock"
 date: "6/18/2021"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -1656,7 +1658,8 @@ theme_set(theme_linedraw() +
 ggplot(consented, aes(x = forcats::fct_infreq(as.factor(responder_category)), fill = responder_category)) +
   geom_bar(color = "black") + scale_fill_viridis_d() +
   # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
-  labs(x = "User Category", y = "Count", title = "Count of Survey Responders by Category") + 
+  labs(x = "User Category", y = "Count", title = "Count of Survey Responders by Category") + ylim(c(0,11)) + 
+  scale_y_continuous(breaks = c(0,2,4,6,8,10), labels = c(0,2,4,6,8,10)) + 
   guides(fill = "none")
     
 ```

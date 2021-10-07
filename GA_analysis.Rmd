@@ -3,6 +3,8 @@ title: "GA_analysis"
 author: "Michael Breshock"
 date: "6/25/2021"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +14,7 @@ library(ggplot2)
 library(tidyverse)
 library(magrittr)
 library(ggmap)
-library(maps)
+library(leaflet)
 ```
 
 ```{r}
@@ -131,8 +133,46 @@ cities
 city: The city from which the user activity originated.
 
 ```{r}
+worldmap = map_data("world")
 cities = drop_na(cities)
 save(cities, file = "city_coordinates.rda")
+```
+
+```{r}
+# Create a color palette with handmade bins.
+mybins <- c(1, 5, 10, 50, 100, 1000, 2000)
+mypalette <- colorBin(palette="Reds", domain = cities$sessions,
+                      na.color="transparent", bins=mybins)
+
+
+# Final Map
+m <- leaflet(cities) %>% 
+  addTiles()  %>% 
+  setView(lat = 0, lng = 0, zoom = 1) %>%
+  addProviderTiles("Esri.WorldImagery") %>%
+  addCircleMarkers(~longitude, ~latitude, 
+    fillColor = ~mypalette(sessions), fillOpacity = 0.7, radius= ~sqrt(sessions), stroke=FALSE
+  ) %>%
+  addLegend(pal=mypalette, values=~sessions, opacity=0.9, title = "Sessions", position = "topright" )
+
+m 
+```
+
+```{r}
+cities10 = cities %>% filter(country != "Peru") %>% head(10) %>% 
+  mutate(city = case_when(
+    city == "(not set)" ~ " ",
+    TRUE ~ city)) %>%
+  unite(location, c(city, country), sep = "\n")
+
+ggplot(cities10, aes(x = as_factor(location), y = sessions, fill = as_factor(location))) +
+  geom_col() + scale_fill_viridis_d() + 
+  labs(x = "City, Country", y = "No. of Sessions", 
+       title = "Top Ten Cities With Most Open Case Studies Sessions") + 
+  guides(fill = "none") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  scale_y_continuous() + 
+  geom_text(aes(label = paste0(sessions)), vjust = -.5) + ylim(c(0,1150))
 ```
 
 
@@ -169,7 +209,56 @@ urls = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
           dimensions = c("fullPageUrl"))
-urls
+
+case_studies = c("ocs-bp-rural-and-urban-obesity", 
+                 "ocs-bp-air-pollution",
+                 "ocs-bp-vaping-case-study",
+                 "ocs-bp-opioid-rural-urban",
+                 "ocs-bp-RTC-wrangling", 
+                 "ocs-bp-RTC-analysis", 
+                 "ocs-bp-youth-disconnection",
+                 "ocs-bp-youth-mental-health", 
+                 "ocs-bp-school-shootings-dashboard",
+                 "ocs-bp-co2-emissions",
+                 "ocs-bp-diet")
+
+pageUrl = urls %>% mutate(
+  interactive = str_detect(fullPageUrl, "rsconnect")) %>% 
+  filter(str_detect(fullPageUrl, "opencasestudies.org") | 
+           str_detect(fullPageUrl, "jhsph.edu/ocs")) %>%
+  mutate(
+    code = case_when(
+      str_detect(fullPageUrl, "ocs-bp-school-shootings-dashboard") == TRUE ~ "School Shootings", 
+      str_detect(fullPageUrl, "ocs-bp-youth-disconnection") == TRUE ~ "Youth Disconnection", 
+      str_detect(fullPageUrl, "ocs-bp-opioid-rural-urban") == TRUE ~ "Opiods",
+      str_detect(fullPageUrl, "ocs-bp-vaping-case-study") == TRUE ~ "Vaping",
+      str_detect(fullPageUrl, "ocs-bp-youth-mental-health") == TRUE ~ "Mental Health",
+      str_detect(fullPageUrl, "ocs-bp-rural-and-urban-obesity") == TRUE ~ "Obesity", 
+      str_detect(fullPageUrl, "ocs-bp-RTC-analysis") == TRUE ~ "RTC Analysis",
+      str_detect(fullPageUrl, "ocs-bp-co2-emissions") == TRUE ~ "CO2 Emissions",
+      str_detect(fullPageUrl, "ocs-bp-RTC-wrangling") == TRUE ~ "RTC Wrangling",
+      str_detect(fullPageUrl, "ocs-bp-diet") == TRUE ~ "Diet",
+      str_detect(fullPageUrl, "ocs-bp-air-pollution") == TRUE ~ "Air Pollution"
+    )
+  ) 
+
+pageTotals = pageUrl %>% group_by(code) %>% 
+  mutate(ocs_sum = sum(sessions)) %>% select(code, ocs_sum) %>% distinct()
+
+interactiveTotals = pageUrl %>% filter(interactive == TRUE) %>% group_by(code) %>%
+  mutate(ocs_sum = sum(sessions)) %>% select(code, ocs_sum, interactive) %>% distinct()
+
+staticTotals = pageUrl %>% filter(interactive == FALSE) %>% group_by(code) %>%
+  mutate(ocs_sum = sum(sessions)) %>% select(code, ocs_sum, interactive) %>% distinct()
+
+urldf = bind_rows(staticTotals, interactiveTotals)
+
+ggplot(urldf, aes(x = code, y = ocs_sum, fill = interactive)) +
+  geom_bar(position = "dodge", stat = "identity") + #scale_fill_viridis_d() + 
+  labs(x = "Case Study", y = "Session Count", 
+       title = "Number of Sessions by Case Study", fill = "Version") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  ylim(c(0,750)) + scale_fill_manual(labels = c("Static", "Interactive"), values = c("#0032A0", "#D00070"))
 ```
 
 ```{r, langauge}
@@ -282,10 +371,26 @@ sources
 ocs_property_id = 256923228
 engagedSessions = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
-          metrics = c("engagedSessions", "engagementRate"),
-          dimensions = c("date"), limit = 1000)
-engagedSessions
+          metrics = c("engagedSessions", "engagementRate", "sessions"),
+          dimensions = c("week"), limit = 1000)
+
+ses_long = engagedSessions %>%
+  pivot_longer(c(sessions, engagedSessions), names_to = "metric", values_to = "count")
+
+ggplot(ses_long, aes(x = as.numeric(week), y = count, color = metric)) +
+  geom_line() +
+  labs(x = "Week Number", y = "Count", title = "Open Case Studies Weekly Sessions and Engaged Sessions")
 ```
+
+```{r}
+ggplot(engagedSessions, aes(x = as.numeric(week), y = engagementRate, 
+                            color = engagementRate)) +
+  geom_line() + 
+  labs(x = "Week Number", y = "Engagement Rate", 
+       title = "Open Case Studies Weekly Engagement Rate") #+ 
+  #scale_color_manual(labels = "engagmentRate", values = "#8C4799")
+```
+
 
 ```{r, screenPageViews}
 ocs_property_id = 256923228
