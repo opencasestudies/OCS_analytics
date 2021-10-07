@@ -11,6 +11,8 @@ library(googleAnalyticsR)
 library(ggplot2)
 library(tidyverse)
 library(magrittr)
+library(ggmap)
+library(maps)
 ```
 
 ```{r}
@@ -119,10 +121,20 @@ cities = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
           dimensions = c("country", "city"), limit = 1000)
+cities %<>% mutate(
+  latitude = geocode(paste(city, country, sep = ", "))$lat,
+  longitude = geocode(paste(city, country, sep = ", "))$lon
+)
 cities
 ```
 
 city: The city from which the user activity originated.
+
+```{r}
+cities = drop_na(cities)
+save(cities, file = "city_coordinates.rda")
+```
+
 
 ```{r, browser}
 ocs_property_id = 256923228
