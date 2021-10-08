@@ -82,6 +82,7 @@ pivot_longer(users_wk, c(totalUsers, newUsers, active7DayUsers),
 ```
 
 ```{r}
+ocs_property_id = 256923228
 users_date = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("totalUsers", "newUsers", "eventCount",
@@ -410,6 +411,16 @@ sessionsPerUser = ga_data(ocs_property_id,
 sessionsPerUser
 ```
 
+```{r, conversions}
+ocs_property_id = 256923228
+conversions = ga_data(ocs_property_id,
+          date_range = c("2021-01-01", "yesterday"),
+          metrics = c("conversions"),
+          dimensions = c("eventName"), limit = 1000)
+conversions
+```
+
+
 dimensions of interest:
 - browser
 - cohort
@@ -450,3 +461,5 @@ helpful links:
 https://www.dase-analytics.com/blog/en/how-to-get-data-from-google-analytics-using-r-programming/
 
 https://ga-dev-tools.web.app/dimensions-metrics-explorer/
+
+https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
