@@ -1935,12 +1935,52 @@ refer_back = bind_rows(refer_back_stud, refer_back_sl)
 referdf = refer_back %>% group_by(refer_back) %>% summarise(count = n()) %>% 
   mutate(percent = 100*count/sum(count))
 
-ggplot(referdf, aes(x = as.factor(refer_back), y = percent, fill = as.factor(refer_back))) +
+referplot = ggplot(referdf, aes(x = as.factor(refer_back), y = percent, fill = as.factor(refer_back))) +
   geom_col() + scale_fill_viridis_d() + 
   labs(x = "Rank (out of 5)", y = "Percent of Responses (%)", 
-       title = "How likely are you to refer back to the case studies in the future?") + 
+       title = "Refer Back") + 
   guides(fill = "none") + scale_y_continuous(labels = function(x) paste0(x, "%")) + 
-  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,50))
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,80))
+```
+
+
+```{r enjoyment}
+enjoy_stud = studentdf %>% select(enjoyment) %>% drop_na()
+enjoy_sl = self_learnerdf %>% select(enjoyment) %>% drop_na()
+enjoy = bind_rows(enjoy_stud, enjoy_sl)
+enjoydf = enjoy %>% group_by(enjoyment) %>% 
+  summarise(count = n()) %>% 
+  mutate(percent = round(100*count/sum(count),0))
+
+enjoyplot = ggplot(enjoydf, aes(x = as_factor(enjoyment), y = percent, fill = as_factor(enjoyment))) +
+  geom_col() + scale_fill_viridis_d() + 
+  labs(x = "Rank (out of 5)", y = "Percent of Responses (%)", 
+       title = "Enjoyment") + 
+  guides(fill = "none") + scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,80))
+```
+
+```{r usefulness}
+useful_stud = studentdf %>% select(usefulness) %>% drop_na()
+useful_sl = self_learnerdf %>% select(usefulness) %>% drop_na()
+useful = bind_rows(useful_stud, useful_sl)
+usefuldf = useful %>% group_by(usefulness) %>% 
+  summarise(count = n()) %>% 
+  mutate(percent = round(100*count/sum(count),0))
+
+usefulplot = ggplot(usefuldf, aes(x = as_factor(usefulness), y = percent, fill = as_factor(usefulness))) +
+  geom_col() + scale_fill_viridis_d() + 
+  labs(x = "Rank (out of 5)", y = "Percent of Responses (%)", 
+       title = "Usefulness") + 
+  guides(fill = "none") + scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,80))
+```
+
+```{r stud_sl_review}
+ggarrange(usefulplot, referplot + rremove("ylab") + 
+            rremove("y.text"), enjoyplot + rremove("xlab"),
+          labels = c("A.", "B.", "C."), 
+          ncol = 2, nrow = 2)
 ```
 
 ```{r familiarity}
