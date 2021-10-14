@@ -24,21 +24,23 @@ theme_set(theme_linedraw() +
                                            color = "black"),
                   axis.title = element_text(size = 12, 
                                             color = "black"),
-                  plot.title = element_text(hjust = .5))
+                  plot.title = element_text(size = 14, 
+                                            color = "black",
+                                            hjust = .5))
           )
 ```
 
-```{r}
+```{r sessionsdaily}
 ocs_property_id = 256923228
 dates = ga_data(ocs_property_id,
-        date_range = c("2021-01-01", "2021-10-06"),
+        date_range = c("2021-01-01", "today"),
         metric = c("sessions"),
         dimensions = c("date"), limit = 400)
 dates
 ```
 
 
-```{r}
+```{r devicecategory}
 ocs_property_id = 256923228
 ses_wk_ctg = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
@@ -57,7 +59,7 @@ sessions: The number of sessions that began on your site or app (event triggered
 deviceCategory: The type of device: Desktop, Tablet, or Mobile.
 
 
-```{r}
+```{r sources}
 user_sources = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("newUsers"),
@@ -76,7 +78,7 @@ firstUserSource = The source that first acquired the user to your website or app
 newUsers: The number of users who interacted with your site or launched your app for the first time (event triggered: first_open or first_visit).
 
 
-```{r}
+```{r usersweek}
 users_wk = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("totalUsers", "newUsers", "eventCount",
@@ -92,7 +94,7 @@ pivot_longer(users_wk, c(totalUsers, newUsers, active7DayUsers),
   geom_line(aes(color = metric))
 ```
 
-```{r}
+```{r usersday}
 ocs_property_id = 256923228
 users_date = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
@@ -107,7 +109,7 @@ users_date = ga_data(ocs_property_id,
     labs(x = "Day", y = "User Count", title = "Open Case Studies Daily New and Active Users")
 ```
 
-```{r}
+```{r usertotals}
 #users totals
 ocs_property_id = 256923228
 total_users = ga_data(ocs_property_id,
@@ -120,7 +122,7 @@ avg_totusers = total_users$active1DayUsers / nrow(dates)
 ```
 
 
-```{r}
+```{r avgengage}
 ggplot(users_date, aes(x = as.factor(avgEngagementDuration), 
                        fill = as.factor(avgEngagementDuration))) + 
   geom_bar() + scale_fill_viridis_d() + guides(fill = "none") +
@@ -140,7 +142,7 @@ active7DayUsers: The number of distinct active users on your site or app within 
 userEngagementDuration: The total amount of time (in seconds) your website or app was in the foreground of users' devices. 
 
 
-```{r}
+```{r cities}
 cities = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
@@ -160,7 +162,7 @@ cities = drop_na(cities)
 save(cities, file = "city_coordinates.rda")
 ```
 
-```{r}
+```{r bubblemap}
 # Create a color palette with handmade bins.
 mybins <- c(1, 5, 10, 50, 100, 1000, 2000)
 mypalette <- colorBin(palette="Reds", domain = cities$sessions,
@@ -180,7 +182,7 @@ m <- leaflet(cities) %>%
 m 
 ```
 
-```{r}
+```{r topcities}
 cities10 = cities %>% filter(country != "Peru") %>% head(10) %>% 
   mutate(city = case_when(
     city == "(not set)" ~ " ",
@@ -225,7 +227,7 @@ mediums = ga_data(ocs_property_id,
 mediums
 ```
 
-```{r, url}
+```{r url}
 ocs_property_id = 256923228
 urls = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "2021-10-06"),
@@ -283,7 +285,7 @@ ggplot(urldf, aes(x = code, y = ocs_sum, fill = interactive)) +
   ylim(c(0,750)) + scale_fill_manual(labels = c("Static", "Interactive"), values = c("#0032A0", "#D00070"))
 ```
 
-```{r, langauge}
+```{r langauge}
 ocs_property_id = 256923228
 language = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
@@ -321,7 +323,7 @@ pageReferrer
 
 
 look into collapsing duplicates functions / group_by!
-```{r, pagetitle}
+```{r pagetitle}
 ocs_property_id = 256923228
 # used fullPageUrl instead 
 # pagetitle = ga_data(ocs_property_id,
@@ -363,7 +365,7 @@ ocs_property_id = 256923228
 # pages
 ```
 
-```{r, percentScrolled}
+```{r percentScrolled}
 ocs_property_id = 256923228
 percentScrolled = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
@@ -372,7 +374,7 @@ percentScrolled = ga_data(ocs_property_id,
 percentScrolled
 ```
 
-```{r, searchTerm}
+```{r searchTerm}
 ocs_property_id = 256923228
 searchTerm = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
@@ -381,7 +383,7 @@ searchTerm = ga_data(ocs_property_id,
 searchTerm
 ```
 
-```{r, sources}
+```{r sources}
 ocs_property_id = 256923228
 sources = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
