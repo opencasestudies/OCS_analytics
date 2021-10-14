@@ -15,6 +15,7 @@ library(tidyverse)
 library(magrittr)
 library(ggmap)
 library(leaflet)
+library(ggpubr)
 ```
 
 ```{r}
@@ -322,43 +323,44 @@ pageReferrer
 look into collapsing duplicates functions / group_by!
 ```{r, pagetitle}
 ocs_property_id = 256923228
-pagetitle = ga_data(ocs_property_id,
-          date_range = c("2021-01-01", "yesterday"),
-          metrics = c("sessions"),
-          dimensions = c("pageTitle"))
-case_studies = c("School Shootings in the United States", 
-                 "Disparities in Youth Disconnection",
-                 "Opioids in United States",
-                 "Vaping Behaviors in American Youth",
-                 "Mental Health of American Youth", 
-                 "Exploring global patterns of obesity across rural and urban regions",  "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws", 
-                 "Exploring CO2 emissions across time",
-                 "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws Part 1", 
-                 "Exploring global patterns of dietary behaviors associated with health risk",
-                 "Predicting Annual Air Pollution")
-pages = pagetitle %>% mutate(
-  ocs = str_remove(pageTitle, pattern = "Open Case Studies: ") 
-) %>% 
-  filter(ocs %in% case_studies) %>% 
-  mutate(
-    static = str_count(pageTitle, "Open Case Studies: ")) %>%
-  mutate(
-    code = case_when(
-      ocs == "School Shootings in the United States" ~ "School Shootings", 
-      ocs == "Disparities in Youth Disconnection" ~ "Youth Disconnection", 
-      ocs == "Opioids in United States" ~ "Opiods",
-      ocs == "Vaping Behaviors in American Youth" ~ "Vaping",
-      ocs == "Mental Health of American Youth" ~ "Mental Health",
-      ocs == "Exploring global patterns of obesity across rural and urban regions" ~ "Obesity", 
-      ocs == "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws" ~ "RTC Analysis",
-      ocs == "Exploring CO2 emissions across time" ~ "CO2 Emissions",
-      ocs == "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws Part 1" ~ "RTC Wrangling",
-      ocs == "Exploring global patterns of dietary behaviors associated with health risk" ~ "Diet",
-      ocs == "Predicting Annual Air Pollution" ~ "Air Pollution"
-    )
-  ) %>% group_by(code) %>% 
-  mutate(ocs_sum = sum(sessions)) %>% select(code, ocs_sum) %>% distinct()
-pages
+# used fullPageUrl instead 
+# pagetitle = ga_data(ocs_property_id,
+#           date_range = c("2021-01-01", "yesterday"),
+#           metrics = c("sessions"),
+#           dimensions = c("pageTitle"))
+# case_studies = c("School Shootings in the United States", 
+#                  "Disparities in Youth Disconnection",
+#                  "Opioids in United States",
+#                  "Vaping Behaviors in American Youth",
+#                  "Mental Health of American Youth", 
+#                  "Exploring global patterns of obesity across rural and urban regions",  "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws", 
+#                  "Exploring CO2 emissions across time",
+#                  "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws Part 1", 
+#                  "Exploring global patterns of dietary behaviors associated with health risk",
+#                  "Predicting Annual Air Pollution")
+# pages = pagetitle %>% mutate(
+#   ocs = str_remove(pageTitle, pattern = "Open Case Studies: ") 
+# ) %>% 
+#   filter(ocs %in% case_studies) %>% 
+#   mutate(
+#     static = str_count(pageTitle, "Open Case Studies: ")) %>%
+#   mutate(
+#     code = case_when(
+#       ocs == "School Shootings in the United States" ~ "School Shootings", 
+#       ocs == "Disparities in Youth Disconnection" ~ "Youth Disconnection", 
+#       ocs == "Opioids in United States" ~ "Opiods",
+#       ocs == "Vaping Behaviors in American Youth" ~ "Vaping",
+#       ocs == "Mental Health of American Youth" ~ "Mental Health",
+#       ocs == "Exploring global patterns of obesity across rural and urban regions" ~ "Obesity", 
+#       ocs == "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws" ~ "RTC Analysis",
+#       ocs == "Exploring CO2 emissions across time" ~ "CO2 Emissions",
+#       ocs == "Influence of Multicollinearity on Measured Impact of Right-to-Carry Gun Laws Part 1" ~ "RTC Wrangling",
+#       ocs == "Exploring global patterns of dietary behaviors associated with health risk" ~ "Diet",
+#       ocs == "Predicting Annual Air Pollution" ~ "Air Pollution"
+#     )
+#   ) %>% group_by(code) %>% 
+#   mutate(ocs_sum = sum(sessions)) %>% select(code, ocs_sum) %>% distinct()
+# pages
 ```
 
 ```{r, percentScrolled}
@@ -388,34 +390,41 @@ sources = ga_data(ocs_property_id,
 sources
 ```
 
-```{r, engagedSessions}
+```{r sessions}
 ocs_property_id = 256923228
 engagedSessions = ga_data(ocs_property_id,
-          date_range = c("2021-01-01", "2021-10-6"),
+          date_range = c("2021-01-01", "today"),
           metrics = c("engagedSessions", "engagementRate", "sessions"),
           dimensions = c("week"), limit = 1000)
 
 ses_long = engagedSessions %>%
   pivot_longer(c(sessions, engagedSessions), names_to = "metric", values_to = "count")
 
-ggplot(ses_long, aes(x = as.numeric(week), y = count, color = metric)) +
+sesplot = ggplot(ses_long, aes(x = as.numeric(week), y = count, color = metric)) +
   geom_line() +
   labs(x = "Week Number", y = "Count", title = "Open Case Studies Weekly Sessions and Engaged Sessions")
 ```
 
-```{r}
-ggplot(engagedSessions, aes(x = as.numeric(week), y = engagementRate, 
+```{r engagedSessions}
+engageplot = ggplot(engagedSessions, aes(x = as.numeric(week), y = engagementRate, 
                             color = engagementRate)) +
   geom_line() + 
   labs(x = "Week Number", y = "Engagement Rate", 
-       title = "Open Case Studies Weekly Engagement Rate") #+ 
+       title = "Open Case Studies Weekly Engagement Rate") + guides(color = "none") 
   #scale_color_manual(labels = "engagmentRate", values = "#8C4799")
 ```
+
+```{r engagementplot}
+ggarrange(sesplot, engageplot,
+          labels = c("A.", "B."), 
+          ncol = 1, nrow = 2)
+```
+
 
 ```{r}
 #totals
 totalSessions = ga_data(ocs_property_id,
-          date_range = c("2021-01-01", "2021-10-6"),
+          date_range = c("2021-01-01", "today"),
           metrics = c("engagedSessions", "engagementRate", "sessions"),
           limit = 1000)
 avgsessions = totalSessions$sessions / nrow(dates)
