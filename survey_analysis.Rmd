@@ -13,6 +13,7 @@ library(googlesheets4)
 library(openxlsx)
 library(magrittr)
 library(ggpubr)
+library(forcats)
 ```
 
 *note: if time, consider remaking plots with ggpubr theme*
@@ -1661,7 +1662,7 @@ theme_set(theme_linedraw() +
 ggplot(consented, aes(x = forcats::fct_infreq(as.factor(responder_category)), fill = responder_category)) +
   geom_bar(color = "black") + scale_fill_viridis_d() +
   # scale_fill_manual(values = c("#5592CC", "#714986", "#4B9B81")) + 
-  labs(x = "User Category", y = "Count", title = "Count of Survey Responders by Category") + ylim(c(0,12)) + 
+  labs(x = "User Category", y = "Count", title = "Count of Survey Participants by Category") + ylim(c(0,12)) + 
   scale_y_continuous(breaks = c(0,2,4,6,8,10), labels = c(0,2,4,6,8,10)) + 
   guides(fill = "none")
     
@@ -1815,10 +1816,10 @@ looked_at_cs_counts = bind_rows(looked_at_cs_all, looked_at_cs_edu, looked_at_cs
     )
   ) %>% mutate(percent = round(percent))
 
-ggplot(looked_at_cs_counts, aes(x = case_study, y = percent, fill = responder_category)) +
+ggplot(looked_at_cs_counts, aes(x = reorder(case_study, -percent), y = percent, fill = responder_category)) +
   geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
   labs(x = "Case Study", y = "Percent (%)", 
-       title = "Percent of Participants Using Each Case Study") +
+       title = "Which Case Studies did Participants Look at?") +
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
   guides(fill = guide_legend(title = "Category")) + 
   scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,45))
