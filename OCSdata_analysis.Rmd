@@ -23,7 +23,7 @@ totalDownloads <- packageData[[1]]
 
 # call the plotting fn, with default value of device --> PDF
 staticPlots(totalDownloads)
-interactivePlots(totalDownloads, nbrPlts = 1, mytitle = paste("OCSdata Package Download Count over Time"))
+interactivePlots(totalDownloads, nbrPlts = 1, mytitle = paste("OCSdata Package Download Counts"))
 ```
 
 ```{r}
