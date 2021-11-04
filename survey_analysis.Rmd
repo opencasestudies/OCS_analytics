@@ -1861,12 +1861,11 @@ slrecdf = tibble(response = c("3", "4", "5"),
 
 rec_totals = bind_rows(recdf, edurecdf, studrecdf, slrecdf)
 
-ggplot(rec_totals, aes(x = response, y = percent, fill = category)) +
+ggplot(rec_totals, aes(x = factor(response, levels = c("1","2","3","4","5")), y = percent, fill = category)) +
   geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
-  labs(x = "Rank (out of 5)", y = "Percent of Responses (%)", 
-       title = "How likely are you to recommend the case studies to others?") + 
+  labs(x = "Rank", y = "Percent of Responses (%)") + 
   guides(fill = guide_legend(title = "Category")) + 
-  scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,80))
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,80)) + scale_x_discrete(drop = FALSE)
 ```
 
 ```{r parts_interested}
