@@ -1883,7 +1883,7 @@ parts_interest_sum = educatordf %>% select(starts_with("interest_")) %>%
     )
   )
 
-partsplot = ggplot(parts_interest_sum, aes(x = parts, y = percent, fill = parts)) +
+partsplot = ggplot(parts_interest_sum, aes(x = reorder(parts, -percent), y = percent, fill = parts)) +
   geom_col() + scale_fill_viridis_d() + 
   labs(x = "Material", y = "Percent of Educators (%)", 
        title = "Case Study Materials of Interest for Educators") + 
@@ -1912,7 +1912,7 @@ sect_interest_sum = educatordf %>% select(ends_with("_interest")) %>%
     )
   )
 
-sectionsplot = ggplot(sect_interest_sum, aes(x = sections, y = percent, fill = sections)) +
+sectionsplot = ggplot(sect_interest_sum, aes(x = reorder(sections, -percent), y = percent, fill = sections)) +
   geom_col() + scale_fill_viridis_d() + 
   labs(x = "Section", y = "Percent of Educators (%)", 
        title = "Case Study Sections of Interest for Educators") + 
@@ -1933,14 +1933,14 @@ refer_back_stud = studentdf %>% select(refer_back) %>% drop_na()
 refer_back_sl = self_learnerdf %>% select(refer_back) %>% drop_na()
 refer_back = bind_rows(refer_back_stud, refer_back_sl)
 referdf = refer_back %>% group_by(refer_back) %>% summarise(count = n()) %>% 
-  mutate(percent = 100*count/sum(count))
+  mutate(percent = round(100*count/sum(count), 2))
 
-referplot = ggplot(referdf, aes(x = as.factor(refer_back), y = percent, fill = as.factor(refer_back))) +
+referplot = ggplot(referdf, aes(x = factor(refer_back, levels = c("1","2","3","4","5")), y = percent, fill = as.factor(refer_back))) +
   geom_col() + scale_fill_viridis_d() + 
-  labs(x = "Rank (out of 5)", y = "Percent of Responses (%)", 
+  labs(x = "Rank", y = "Percent of Responses (%)", 
        title = "Refer Back") + 
   guides(fill = "none") + scale_y_continuous(labels = function(x) paste0(x, "%")) + 
-  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,80))
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,80)) + scale_x_discrete(drop = FALSE)
 ```
 
 
@@ -1952,12 +1952,12 @@ enjoydf = enjoy %>% group_by(enjoyment) %>%
   summarise(count = n()) %>% 
   mutate(percent = round(100*count/sum(count),0))
 
-enjoyplot = ggplot(enjoydf, aes(x = as_factor(enjoyment), y = percent, fill = as_factor(enjoyment))) +
+enjoyplot = ggplot(enjoydf, aes(x =factor(enjoyment, levels = c("1","2","3","4","5")), y = percent, fill = as_factor(enjoyment))) +
   geom_col() + scale_fill_viridis_d() + 
-  labs(x = "Rank (out of 5)", y = "Percent of Responses (%)", 
+  labs(x = "Rank", y = "Percent of Responses (%)", 
        title = "Enjoyment") + 
   guides(fill = "none") + scale_y_continuous(labels = function(x) paste0(x, "%")) + 
-  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,80))
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,80)) + scale_x_discrete(drop = FALSE)
 ```
 
 ```{r usefulness}
@@ -1968,12 +1968,12 @@ usefuldf = useful %>% group_by(usefulness) %>%
   summarise(count = n()) %>% 
   mutate(percent = round(100*count/sum(count),0))
 
-usefulplot = ggplot(usefuldf, aes(x = as_factor(usefulness), y = percent, fill = as_factor(usefulness))) +
+usefulplot = ggplot(usefuldf, aes(x = factor(usefulness, levels = c("1","2","3","4","5")), y = percent, fill = as_factor(usefulness))) +
   geom_col() + scale_fill_viridis_d() + 
-  labs(x = "Rank (out of 5)", y = "Percent of Responses (%)", 
+  labs(x = "Rank", y = "Percent of Responses (%)", 
        title = "Usefulness") + 
   guides(fill = "none") + scale_y_continuous(labels = function(x) paste0(x, "%")) + 
-  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,80))
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,80)) + scale_x_discrete(drop = FALSE)
 ```
 
 ```{r stud_sl_review}
@@ -1984,8 +1984,8 @@ ggarrange(usefulplot, referplot + rremove("ylab") +
 ```
 
 ```{r familiarity}
-famil_stud = studentdf %>% select(starts_with("famil_")) %>% drop_na()
-famil_sl = self_learnerdf %>% select(starts_with("famil_")) %>% drop_na() 
+famil_stud = studentdf %>% select(starts_with("famil_")) %>% filter_all(any_vars(!is.na(.)))
+famil_sl = self_learnerdf %>% select(starts_with("famil_")) %>% filter_all(any_vars(!is.na(.)))
 familiarity = bind_rows(famil_stud, famil_sl)
 
 famstats = familiarity %>%
@@ -2022,18 +2022,23 @@ famildf1 = bind_rows(famstats, famPH, famDS)
 famildf2 = bind_rows(famtverse, famnonR, famR) %>% 
   mutate(response = fct_inseq(response))
 
-familtopicplot = ggplot(famildf1, aes(x = response, y = percent, fill = topic)) +
+ggplot(famildf1, aes(x = factor(response, levels = c("1","2","3","4"), 
+                                                 labels = c("Never heard\nof the topic", 
+                                                            "Had heard briefly\nabout the topic",
+                                                            "Had an understanding\nabout the topic\nbut not everything\ncovered",
+                                                            "Already knew all\nor most of\nthe material")), 
+                                      y = percent, fill = topic)) +
   geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
-  labs(x = "Rank (out of 4)", y = "Percent of Responses (%)", 
+  labs(x = "Response", y = "Percent of Responses (%)", 
        title = "Student and Self-Learner Familiarity with Case Study Topics") + 
   guides(fill = guide_legend(title = "Topic")) + 
-  scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,75))
+  scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,75)) + scale_x_discrete(drop = FALSE)
 ```
 
 ```{r familiarity2}
-familskillsplot = ggplot(famildf2, aes(x = response, y = percent, fill = topic)) +
+ggplot(drop_na(famildf2), aes(x = response, y = percent, fill = topic)) +
   geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
-  labs(x = "Rank (out of 5)", y = "Percent of Responses (%)", 
+  labs(x = "Rank", y = "Percent of Responses (%)", 
        title = "Student and Self-Learner Familiarity with Case Study Skills") + 
   guides(fill = guide_legend(title = "Skill")) + 
   scale_y_continuous(labels = function(x) paste0(x, "%")) + ylim(c(0,75))
@@ -2045,15 +2050,15 @@ ggarrange(familtopicplot, familskillsplot,
           ncol = 1, nrow = 2)
 ```
 
-```{r learning_interests}
+```{r stud_learning_interests}
 learn_int_stud = studentdf %>% select(starts_with("learn_"))
 learn_int_sl = self_learnerdf %>% select(starts_with("learn_"))
-learn_int = bind_rows(learn_int_stud, learn_int_sl)
-learn_intdf = learn_int %>%
+
+learn_int_studdf = learn_int_stud %>%
   mutate(across(, ~as.numeric(.))) %>%
   summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
   pivot_longer(cols = everything(), names_to = "topics", values_to = "count") %>%
-  mutate(percent = 100*count/nrow(learn_int)) %>%
+  mutate(percent = round(100*count/nrow(learn_int_stud), digits = 2)) %>%
     mutate(topics = case_when(
     str_detect(topics, pattern = "learn_stats") == TRUE ~ "Statistics",
     str_detect(topics, pattern = "learn_ds") == TRUE ~ "Data Science",
@@ -2064,16 +2069,50 @@ learn_intdf = learn_int %>%
     str_detect(topics, pattern = "_spfc_ds") == TRUE ~ "Specific\n Data Science\n Topic",
     str_detect(topics, pattern = "_spfc_PH") == TRUE ~ "Specific\n Public Health\n Topic"
     )
-  )
+  ) %>% mutate(ctg = "Student")
 
-ggplot(learn_intdf, aes(x = as_factor(topics), y = percent, fill = as_factor(topics))) +
+learn_int_sldf = learn_int_sl %>%
+  mutate(across(, ~as.numeric(.))) %>%
+  summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything(), names_to = "topics", values_to = "count") %>%
+  mutate(percent = round(100*count/nrow(learn_int_sl), digits = 4)) %>%
+    mutate(topics = case_when(
+    str_detect(topics, pattern = "learn_stats") == TRUE ~ "Statistics",
+    str_detect(topics, pattern = "learn_ds") == TRUE ~ "Data Science",
+    str_detect(topics, pattern = "learn_PH") == TRUE ~ "Public Health",
+    str_detect(topics, pattern = "_R") == TRUE ~ "R Programming",
+    str_detect(topics, pattern = "_tidyverse") == TRUE ~ "Tidyverse",
+    str_detect(topics, pattern = "_spfc_stats") == TRUE ~ "Specific\n Statistics\n Topic",
+    str_detect(topics, pattern = "_spfc_ds") == TRUE ~ "Specific\n Data Science\n Topic",
+    str_detect(topics, pattern = "_spfc_PH") == TRUE ~ "Specific\n Public Health\n Topic"
+    )
+  ) %>% mutate(ctg = "Self-learner")
+
+studintplot = ggplot(learn_int_studdf, aes(x = reorder(as_factor(topics), -percent), y = percent, fill = as_factor(topics))) +
   geom_col() + scale_fill_viridis_d() + 
   labs(x = "Topic", y = "Percent of Responses (%)", 
-       title = "Student and Self-learner Learning Interests") + 
+       title = "Student Learning Interests") + 
   guides(fill = "none") + 
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
-  scale_y_continuous(labels = function(x) paste0(x, "%")) + 
+  scale_y_continuous(limit = c(0,25,50,75,100)) + 
   geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,100))
+```
+
+```{r self_learn_interests}
+slintplot = ggplot(learn_int_sldf, aes(x = reorder(as_factor(topics), -percent), y = percent, fill = as_factor(topics))) +
+  geom_col() + scale_fill_viridis_d() + 
+  labs(x = "Topic", y = "Percent of Responses (%)", 
+       title = "Self-learner Learning Interests") + 
+  guides(fill = "none") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  scale_y_continuous(breaks = c(0,25,50,75,100)) + 
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,100))
+```
+
+```{r learning_interests_figure}
+ggarrange(studintplot, slintplot,
+          labels = c("A.", "B."), 
+          ncol = 1, nrow = 2)
 ```
 
 ```{r learned_new}
@@ -2087,7 +2126,7 @@ learn_newdf[3,] = learn_newdf[3,] + 1 # adding 1 to each for "all of the above" 
 learn_newdf = learn_newdf %>%
   summarise_all(., ~ sum(.x, na.rm = TRUE)) %>% 
   pivot_longer(cols = everything(), names_to = "topics", values_to = "count") %>%
-  mutate(percent = 100*count/nrow(learn_new)) %>%
+  mutate(percent = round(100*count/nrow(learn_new),2)) %>%
     mutate(topics = case_when(
     str_detect(topics, pattern = "new_stats") == TRUE ~ "Statistics",
     str_detect(topics, pattern = "Rstats") == TRUE ~ "RStats",
@@ -2099,14 +2138,14 @@ learn_newdf = learn_newdf %>%
     )
   )
 
-ggplot(learn_newdf, aes(x = as_factor(topics), y = percent, fill = as_factor(topics))) +
+ggplot(learn_newdf, aes(x = reorder(as_factor(topics), -percent), y = percent, fill = as_factor(topics))) +
   geom_col() + scale_fill_viridis_d() + 
   labs(x = "Topic", y = "Percent of Responses (%)", 
        title = "Students and Self-learners Learned Something New About:") + 
   guides(fill = "none") + 
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
   scale_y_continuous(labels = function(x) paste0(x, "%")) + 
-  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,100))
+  geom_text(aes(label = paste0(percent, "%")), vjust = -.5) + ylim(c(0,80))
 ```
 ```{r how_found}
 howfound = studentdf %>% select(how_found)
