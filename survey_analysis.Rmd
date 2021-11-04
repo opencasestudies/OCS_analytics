@@ -1691,10 +1691,10 @@ teach_stud_sum = educatordf %>% select(starts_with("teach_")) %>%
     )
   )
 
-leveltaughtplot = ggplot(teach_stud_sum, aes(x = type, y = percent, fill = type)) +
+leveltaughtplot = ggplot(teach_stud_sum, aes(x = reorder(type, -percent), y = percent, fill = type)) +
   geom_col() + scale_fill_viridis_d() + 
   labs(x = "Student Type", y = "Percent (%)", 
-       title = "Types of Students Taught by Educators") + 
+       title = "Types of Students Taught by Educator Participants") + 
   guides(fill = "none") + 
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
   scale_y_continuous(labels = function(x) paste0(x, "%")) + 
@@ -1750,10 +1750,10 @@ courses_taught_sum = educatordf %>% select(starts_with("would_use_")) %>%
     )
   )
 
-coursetaughtplot = ggplot(courses_taught_sum, aes(x = subject, y = percent, fill = subject)) +
+coursetaughtplot = ggplot(courses_taught_sum, aes(x = reorder(subject, -percent), y = percent, fill = subject)) +
   geom_col() + scale_fill_viridis_d() + 
   labs(x = "Course Subject", y = "Percent (%)", 
-       title = "Courses Taught by Educators") + 
+       title = "Courses Taught by Educator Participants") + 
   guides(fill = "none") + 
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
   scale_y_continuous(labels = function(x) paste0(x, "%")) + 
