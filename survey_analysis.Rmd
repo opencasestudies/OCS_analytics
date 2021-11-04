@@ -1725,7 +1725,7 @@ teach_int_sum = educatordf %>% select(starts_with("teach_")) %>%
   
 # plot: 
 
-ggplot(teach_int_sum, aes(x = fct_reorder(as.factor(name), specific), y = percent, 
+ggplot(teach_int_sum, aes(x = fct_reorder(reorder(as.factor(name), -percent), specific), y = percent, 
                           fill = topic)) +
   geom_col() + scale_fill_viridis_d() + 
   labs(x = "Subject", y = "Percent of Educators (%)", title = "Educator Teaching Interests") + 
