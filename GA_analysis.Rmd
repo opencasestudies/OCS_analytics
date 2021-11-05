@@ -35,7 +35,7 @@ theme_set(theme_linedraw() +
 ```{r sessionsdaily}
 ocs_property_id = 256923228
 dates = ga_data(ocs_property_id,
-        date_range = c("2021-01-01", "today"),
+        date_range = c("2021-01-01", "yesterday"),
         metric = c("sessions"),
         dimensions = c("date"), limit = 400)
 dates
@@ -115,7 +115,7 @@ users_date = ga_data(ocs_property_id,
 #users totals
 ocs_property_id = 256923228
 total_users = ga_data(ocs_property_id,
-        date_range = c("2021-01-01", "2021-10-06"),
+        date_range = c("2021-01-01", "yesterday"),
         metrics = c("totalUsers", "newUsers",
                  "active1DayUsers"))
 avg_newusers = total_users$newUsers / nrow(dates)
@@ -175,7 +175,7 @@ mypalette <- colorBin(palette="Reds", domain = cities$sessions,
 m <- leaflet(cities) %>% 
   addTiles()  %>% 
   setView(lat = 0, lng = 0, zoom = 1) %>%
-  addProviderTiles("Esri.WorldImagery") %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
   addCircleMarkers(~longitude, ~latitude, 
     fillColor = ~mypalette(sessions), fillOpacity = 0.7, radius= ~sqrt(sessions), stroke=FALSE
   ) %>%
@@ -185,7 +185,7 @@ m
 ```
 
 ```{r topcities}
-cities10 = cities %>% filter(country != "Peru") %>% head(10) %>% 
+cities10 = drop_na(cities) %>% filter(country != "Peru") %>% head(10) %>% 
   mutate(city = case_when(
     city == "(not set)" ~ " ",
     TRUE ~ city)) %>%
@@ -232,7 +232,7 @@ mediums
 ```{r url}
 ocs_property_id = 256923228
 urls = ga_data(ocs_property_id,
-          date_range = c("2021-01-01", "2021-10-06"),
+          date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
           dimensions = c("fullPageUrl"))
 
@@ -277,15 +277,30 @@ interactiveTotals = pageUrl %>% filter(interactive == TRUE) %>% group_by(code) %
 staticTotals = pageUrl %>% filter(interactive == FALSE) %>% group_by(code) %>%
   mutate(ocs_sum = sum(sessions)) %>% select(code, ocs_sum, interactive) %>% distinct()
 
-urldf = bind_rows(staticTotals, interactiveTotals)
-
-ggplot(urldf, aes(x = code, y = ocs_sum, fill = interactive)) +
-  geom_bar(position = "dodge", stat = "identity") + #scale_fill_viridis_d() + 
+cstotalsplot = ggplot(drop_na(pageTotals), aes(x = reorder(code, -ocs_sum), y = ocs_sum, fill = code)) +
+  geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
   labs(x = "Case Study", y = "Session Count", 
-       title = "Number of Sessions by Case Study", fill = "Version") + 
+       title = "Number of Total Sessions by Case Study") + 
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
-  ylim(c(0,750)) + scale_fill_manual(labels = c("Static", "Interactive"), values = c("#0032A0", "#D00070"))
+  ylim(c(0,850)) + guides(fill = "none") + geom_text(aes(label = paste0(ocs_sum)), vjust = -.5)
 ```
+
+```{r interactiveplot}
+interactivesplot = ggplot(drop_na(interactiveTotals), 
+                          aes(x = reorder(code, -ocs_sum), y = ocs_sum, fill = code)) +
+  geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
+  labs(x = "Case Study", y = "Session Count", 
+       title = "Number of Total Sessions by Interactive Case Study") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  ylim(c(0,50)) + guides(fill = "none") + geom_text(aes(label = paste0(ocs_sum)), vjust = -.5)
+```
+
+```{r case_study_sessionsplot}
+ggarrange(cstotalsplot, interactivesplot,
+          labels = c("A.", "B."), 
+          ncol = 1, nrow = 2)
+```
+
 
 ```{r langauge}
 ocs_property_id = 256923228
@@ -397,7 +412,7 @@ sources
 ```{r sessions}
 ocs_property_id = 256923228
 engagedSessions = ga_data(ocs_property_id,
-          date_range = c("2021-01-01", "today"),
+          date_range = c("2021-01-01", "yesterday"),
           metrics = c("engagedSessions", "engagementRate", "sessions"),
           dimensions = c("week"), limit = 1000)
 
@@ -425,7 +440,7 @@ ggarrange(sesplot, engageplot,
 ```
 
 
-```{r}
+```{r sessiontotals}
 #totals
 totalSessions = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "today"),
