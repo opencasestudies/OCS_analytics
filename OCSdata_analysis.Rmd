@@ -60,5 +60,32 @@ ggplot(downloads, aes(x = day, y = cumulative)) +
        title = "Cumulative Number of Downloads Since Release")
 ```
 
+```{r}
+theme_set(theme_linedraw() + 
+            theme(axis.text = element_text(size = 11, 
+                                           color = "black"),
+                  axis.title = element_text(size = 12, 
+                                            color = "black"),
+                  plot.title = element_text(size = 14, 
+                                            color = "black",
+                                            hjust = .5))
+          )
+```
+
+```{r interactive elements}
+counts = c(88,43,40,5)
+type = c("All", "Multiple Choice", "Fill in the Chunk", 
+         "Fill in the Blank")
+
+exercises = tibble(counts, type)
+
+ggplot(exercises, aes(x = reorder(type, -counts), y = counts, fill = type)) +
+  geom_col(color = "black") + scale_fill_viridis_d() +
+  labs(x = "Exercise Type", y = "Count", title = "Number of Interactive Exercises Implemented to Case Studies") + 
+  guides(fill = "none") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  geom_text(aes(label = paste0(counts)), vjust = -.5) + ylim(0,100)
+```
+
 
 
