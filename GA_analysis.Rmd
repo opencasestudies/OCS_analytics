@@ -229,11 +229,94 @@ mediums = ga_data(ocs_property_id,
 mediums
 ```
 
+```{r url_Views}
+ocs_property_id = 256923228
+url_Views = ga_data(ocs_property_id,
+                    date_range = c("2021-01-01", "2024-03-27"),
+                    metrics = c("screenPageViews"), limit = -1,
+                    dimensions = c("fullPageUrl"))
+
+cs_Views = url_Views %>% mutate(
+  interactive = str_detect(fullPageUrl, "rsconnect")) %>% 
+  filter(str_detect(fullPageUrl, "opencasestudies.org") | 
+           str_detect(fullPageUrl, "jhsph.edu/ocs")) %>%
+  mutate(
+    code = case_when(
+      str_detect(fullPageUrl, "ocs-bp-school-shootings-dashboard") == TRUE ~ "School Shootings", 
+      str_detect(fullPageUrl, "ocs-bp-youth-disconnection") == TRUE ~ "Youth Disconnection", 
+      str_detect(fullPageUrl, "ocs-bp-opioid-rural-urban") == TRUE ~ "Opiods",
+      str_detect(fullPageUrl, "ocs-bp-vaping-case-study") == TRUE ~ "Vaping",
+      str_detect(fullPageUrl, "ocs-bp-youth-mental-health") == TRUE ~ "Mental Health",
+      str_detect(fullPageUrl, "ocs-bp-rural-and-urban-obesity") == TRUE ~ "Obesity", 
+      str_detect(fullPageUrl, "ocs-bp-RTC-analysis") == TRUE ~ "RTC Analysis",
+      str_detect(fullPageUrl, "ocs-bp-co2-emissions") == TRUE ~ "CO2 Emissions",
+      str_detect(fullPageUrl, "ocs-bp-RTC-wrangling") == TRUE ~ "RTC Wrangling",
+      str_detect(fullPageUrl, "ocs-bp-diet") == TRUE ~ "Diet",
+      str_detect(fullPageUrl, "ocs-bp-air-pollution") == TRUE ~ "Air Pollution"
+    )
+  ) 
+
+cs_ViewTotals = cs_Views %>% group_by(code) %>% 
+  mutate(total_views = sum(screenPageViews)) %>% select(code, total_views) %>% distinct()
+
+total_views_plot = ggplot(drop_na(cs_ViewTotals), 
+                          aes(x = reorder(code, -total_views), 
+                              y = total_views, fill = code)) +
+  geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
+  labs(x = "Case Study", y = "Total Views", 
+       title = "Number of Total Views by Case Study") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  guides(fill = "none") + geom_text(aes(label = paste0(total_views)), vjust = -.5)
+total_views_plot
+```
+
+```{r url_Users}
+ocs_property_id = 256923228
+url_Users = ga_data(ocs_property_id,
+                    date_range = c("2021-01-01", "2024-03-27"),
+                    metrics = c("totalUsers"), limit = -1,
+                    dimensions = c("fullPageUrl"))
+
+cs_Users = url_Users %>% mutate(
+  interactive = str_detect(fullPageUrl, "rsconnect")) %>% 
+  filter(str_detect(fullPageUrl, "opencasestudies.org") | 
+           str_detect(fullPageUrl, "jhsph.edu/ocs")) %>%
+  mutate(
+    code = case_when(
+      str_detect(fullPageUrl, "ocs-bp-school-shootings-dashboard") == TRUE ~ "School Shootings", 
+      str_detect(fullPageUrl, "ocs-bp-youth-disconnection") == TRUE ~ "Youth Disconnection", 
+      str_detect(fullPageUrl, "ocs-bp-opioid-rural-urban") == TRUE ~ "Opiods",
+      str_detect(fullPageUrl, "ocs-bp-vaping-case-study") == TRUE ~ "Vaping",
+      str_detect(fullPageUrl, "ocs-bp-youth-mental-health") == TRUE ~ "Mental Health",
+      str_detect(fullPageUrl, "ocs-bp-rural-and-urban-obesity") == TRUE ~ "Obesity", 
+      str_detect(fullPageUrl, "ocs-bp-RTC-analysis") == TRUE ~ "RTC Analysis",
+      str_detect(fullPageUrl, "ocs-bp-co2-emissions") == TRUE ~ "CO2 Emissions",
+      str_detect(fullPageUrl, "ocs-bp-RTC-wrangling") == TRUE ~ "RTC Wrangling",
+      str_detect(fullPageUrl, "ocs-bp-diet") == TRUE ~ "Diet",
+      str_detect(fullPageUrl, "ocs-bp-air-pollution") == TRUE ~ "Air Pollution"
+    )
+  ) 
+
+cs_UserTotals = cs_Users %>% group_by(code) %>% 
+  mutate(total_users = sum(totalUsers)) %>% select(code, total_users) %>% distinct()
+
+total_users_plot = ggplot(drop_na(cs_UserTotals), 
+                          aes(x = reorder(code, -total_users), 
+                              y = total_users, fill = code)) +
+  geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
+  labs(x = "Case Study", y = "Total Users", 
+       title = "Number of Total Users by Case Study") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  guides(fill = "none") + geom_text(aes(label = paste0(total_users)), vjust = -.5)
+total_users_plot
+```
+
+
 ```{r url}
 ocs_property_id = 256923228
 urls = ga_data(ocs_property_id,
-          date_range = c("2021-01-01", "yesterday"),
-          metrics = c("sessions"),
+          date_range = c("2021-01-01", "2024-03-27"),
+          metrics = c("sessions"), limit = -1,
           dimensions = c("fullPageUrl"))
 
 case_studies = c("ocs-bp-rural-and-urban-obesity", 
