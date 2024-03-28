@@ -1,7 +1,7 @@
 ---
 title: "GA_analysis"
 author: "Michael Breshock"
-date: "6/25/2021"
+date: "3/28/2024"
 output: html_document
 editor_options: 
   chunk_output_type: console
@@ -32,9 +32,10 @@ theme_set(theme_linedraw() +
           )
 ```
 
-```{r eval = FALSE, echo = FALSE}
+```{r echo = FALSE, message = FALSE}
 # Need to authorize before this can be run. 
-ga_auth()
+ga_auth(email = "cansav09@gmail.com")
+ggmap::register_google(key = "AIzaSyBahIBC_aTnJjCwey8oEA1ngvyKo4_cZ60")
 ```
 
 ```{r sessionsdaily}
@@ -152,7 +153,7 @@ active7DayUsers: The number of distinct active users on your site or app within 
 userEngagementDuration: The total amount of time (in seconds) your website or app was in the foreground of users' devices. 
 
 
-```{r cities, eval = FALSE}
+```{r cities}
 cities = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
@@ -180,7 +181,7 @@ mypalette <- colorBin(palette="Reds", domain = cities$sessions,
 
 ```
 
-```{r, eval = FALSE}
+```{r}
 # Final Map
 m <- leaflet(cities) %>% 
   addTiles()  %>% 
@@ -433,7 +434,7 @@ searchTerm = ga_data(ocs_property_id,
 searchTerm
 ```
 
-```{r sources}
+```{r sources 2}
 ocs_property_id = 256923228
 sources = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
