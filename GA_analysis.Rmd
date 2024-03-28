@@ -282,7 +282,19 @@ cstotalsplot = ggplot(drop_na(pageTotals), aes(x = reorder(code, -ocs_sum), y = 
   labs(x = "Case Study", y = "Session Count", 
        title = "Number of Total Sessions by Case Study") + 
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
-  ylim(c(0,850)) + guides(fill = "none") + geom_text(aes(label = paste0(ocs_sum)), vjust = -.5)
+  guides(fill = "none") + geom_text(aes(label = paste0(ocs_sum)), vjust = -.5)
+```
+
+```{r staticeplot}
+staticplot = ggplot(drop_na(staticTotals), 
+                          aes(x = reorder(code, -ocs_sum), y = ocs_sum, fill = code)) +
+  geom_bar(position = "dodge", stat = "identity") + scale_fill_viridis_d() + 
+  labs(x = "Case Study", y = "Session Count", 
+       title = "Number of Total Sessions by Static Case Study") + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
+  guides(fill = "none") + geom_text(aes(label = paste0(ocs_sum)), vjust = -.5) +
+  ylim(0,1150)
+staticplot
 ```
 
 ```{r interactiveplot}
@@ -292,11 +304,13 @@ interactivesplot = ggplot(drop_na(interactiveTotals),
   labs(x = "Case Study", y = "Session Count", 
        title = "Number of Total Sessions by Interactive Case Study") + 
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5)) + 
-  ylim(c(0,50)) + guides(fill = "none") + geom_text(aes(label = paste0(ocs_sum)), vjust = -.5)
+  guides(fill = "none") + geom_text(aes(label = paste0(ocs_sum)), vjust = -.5) + 
+  ylim(0,500)
+interactivesplot
 ```
 
 ```{r case_study_sessionsplot}
-ggarrange(cstotalsplot, interactivesplot,
+ggarrange(staticplot, interactivesplot,
           labels = c("A.", "B."), 
           ncol = 1, nrow = 2)
 ```
