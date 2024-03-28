@@ -32,12 +32,17 @@ theme_set(theme_linedraw() +
           )
 ```
 
+```{r eval = FALSE, echo = FALSE}
+# Need to authorize before this can be run. 
+ga_auth()
+```
+
 ```{r sessionsdaily}
 ocs_property_id = 256923228
 dates = ga_data(ocs_property_id,
         date_range = c("2021-01-01", "yesterday"),
-        metric = c("sessions"),
-        dimensions = c("date"), limit = 400)
+        metrics = c("sessions"),
+        dimensions = c("date"), limit = -1)
 dates
 ```
 
@@ -47,7 +52,8 @@ ocs_property_id = 256923228
 ses_wk_ctg = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("deviceCategory"))
+          dimensions = c("deviceCategory"), 
+          limit = -1)
 ses_wk_ctg %<>% mutate(percent = round(100*sessions/sum(sessions), 2),
                        total = sum(sessions)) 
 
@@ -65,7 +71,8 @@ deviceCategory: The type of device: Desktop, Tablet, or Mobile.
 user_sources = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("newUsers"),
-          dimensions = c("firstUserSource")) %>%
+          dimensions = c("firstUserSource"), 
+          limit = -1) %>%
   subset(grepl("127",firstUserSource) == FALSE) %>% 
   mutate(firstUserSource = as_factor(firstUserSource),
          firstUserSource = fct_infreq(firstUserSource))
@@ -85,10 +92,10 @@ users_wk = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("totalUsers", "newUsers", "eventCount",
                       "active7DayUsers", "userEngagementDuration"),
-          dimensions = c("week")) %>% 
+          dimensions = c("week"), 
+          limit = -1) %>% 
   mutate(week = as.numeric(week),
-         avgEngagementDuration = # avg engagement in minutes
-           round(userEngagementDuration/(60*totalUsers)))
+         avgEngagementDuration = round(userEngagementDuration/(60*totalUsers)))
 
 pivot_longer(users_wk, c(totalUsers, newUsers, active7DayUsers), 
              names_to = "metric", values_to = "count") %>%
@@ -102,7 +109,7 @@ users_date = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("totalUsers", "newUsers",
                       "active1DayUsers"),
-          dimensions = c("date"), limit = 1000) %>% 
+          dimensions = c("date"), limit = -1) %>% 
   pivot_longer(c(newUsers, active1DayUsers), 
               names_to = "metric", values_to = "count")
 
@@ -117,14 +124,15 @@ ocs_property_id = 256923228
 total_users = ga_data(ocs_property_id,
         date_range = c("2021-01-01", "yesterday"),
         metrics = c("totalUsers", "newUsers",
-                 "active1DayUsers"))
+                 "active1DayUsers"), 
+        limit = -1)
 avg_newusers = total_users$newUsers / nrow(dates)
 avg_totusers = total_users$active1DayUsers / nrow(dates)
 
 ```
 
 
-```{r avgengage}
+```{r avgengage, eval = FALSE}
 ggplot(users_date, aes(x = as.factor(avgEngagementDuration), 
                        fill = as.factor(avgEngagementDuration))) + 
   geom_bar() + scale_fill_viridis_d() + guides(fill = "none") +
@@ -144,11 +152,11 @@ active7DayUsers: The number of distinct active users on your site or app within 
 userEngagementDuration: The total amount of time (in seconds) your website or app was in the foreground of users' devices. 
 
 
-```{r cities}
+```{r cities, eval = FALSE}
 cities = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("country", "city"), limit = 1000)
+          dimensions = c("country", "city"), limit = -1)
 cities %<>% mutate(
   latitude = geocode(paste(city, country, sep = ", "))$lat,
   longitude = geocode(paste(city, country, sep = ", "))$lon
@@ -170,7 +178,9 @@ mybins <- c(1, 5, 10, 50, 100, 1000, 2000)
 mypalette <- colorBin(palette="Reds", domain = cities$sessions,
                       na.color="transparent", bins=mybins)
 
+```
 
+```{r, eval = FALSE}
 # Final Map
 m <- leaflet(cities) %>% 
   addTiles()  %>% 
@@ -207,7 +217,8 @@ ocs_property_id = 256923228
 browsers = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("browser"))
+          dimensions = c("browser"), 
+          limit = -1)
 head(browsers)
 ```
 
@@ -216,7 +227,7 @@ ocs_property_id = 256923228
 dhm = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("hour"), limit = 1000)
+          dimensions = c("hour"), limit = -1)
 dhm
 ```
 
@@ -225,7 +236,8 @@ ocs_property_id = 256923228
 mediums = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("medium"))
+          dimensions = c("medium"), 
+          limit = -1)
 mediums
 ```
 
@@ -234,7 +246,8 @@ ocs_property_id = 256923228
 urls = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("fullPageUrl"))
+          dimensions = c("fullPageUrl"), 
+          limit = -1)
 
 case_studies = c("ocs-bp-rural-and-urban-obesity", 
                  "ocs-bp-air-pollution",
@@ -321,7 +334,8 @@ ocs_property_id = 256923228
 language = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("newUsers"),
-          dimensions = c("language"))
+          dimensions = c("language"), 
+          limit = -1)
 language
 ```
 
@@ -330,7 +344,8 @@ ocs_property_id = 256923228
 linkUrl = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("linkUrl"))
+          dimensions = c("linkUrl"), 
+          limit = -1)
 linkUrl
 ```
 
@@ -339,7 +354,8 @@ ocs_property_id = 256923228
 OSversion = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("operatingSystem"))
+          dimensions = c("operatingSystem"), 
+          limit = -1)
 OSversion
 ```
 
@@ -348,7 +364,8 @@ ocs_property_id = 256923228
 pageReferrer = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("pageReferrer"))
+          dimensions = c("pageReferrer"), 
+          limit = -1)
 pageReferrer
 ```
 
@@ -401,7 +418,8 @@ ocs_property_id = 256923228
 percentScrolled = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("percentScrolled"))
+          dimensions = c("percentScrolled"), 
+          limit = -1)
 percentScrolled
 ```
 
@@ -410,7 +428,8 @@ ocs_property_id = 256923228
 searchTerm = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("searchTerm"))
+          dimensions = c("searchTerm"), 
+          limit = -1)
 searchTerm
 ```
 
@@ -419,7 +438,8 @@ ocs_property_id = 256923228
 sources = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessions"),
-          dimensions = c("source"))
+          dimensions = c("source"), 
+          limit = -1)
 sources
 ```
 
@@ -428,7 +448,7 @@ ocs_property_id = 256923228
 engagedSessions = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("engagedSessions", "engagementRate", "sessions"),
-          dimensions = c("week"), limit = 1000)
+          dimensions = c("week"), limit = -1)
 
 ses_long = engagedSessions %>%
   pivot_longer(c(sessions, engagedSessions), names_to = "metric", values_to = "count")
@@ -459,7 +479,7 @@ ggarrange(sesplot, engageplot,
 totalSessions = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "today"),
           metrics = c("engagedSessions", "engagementRate", "sessions"),
-          limit = 1000)
+          limit = -1)
 avgsessions = totalSessions$sessions / nrow(dates)
 avgengagedsessions = totalSessions$engagedSessions / nrow(dates)
 ```
@@ -470,7 +490,7 @@ ocs_property_id = 256923228
 screenPageViews = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("screenPageViews"),
-          dimensions = c("pageTitle"), limit = 1000)
+          dimensions = c("pageTitle"), limit = -1)
 screenPageViews
 ```
 
@@ -479,7 +499,7 @@ ocs_property_id = 256923228
 sessionsPerUser = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("sessionsPerUser"),
-          dimensions = c("pageTitle"), limit = 1000)
+          dimensions = c("pageTitle"), limit = -1)
 sessionsPerUser
 ```
 
@@ -488,7 +508,7 @@ ocs_property_id = 256923228
 conversions = ga_data(ocs_property_id,
           date_range = c("2021-01-01", "yesterday"),
           metrics = c("conversions"),
-          dimensions = c("eventName"), limit = 1000)
+          dimensions = c("eventName"), limit = -1)
 conversions
 ```
 
