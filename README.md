@@ -9,7 +9,7 @@ Survey data from Google Forms is automatically saved to a Google Sheets spreadsh
 Data is extracted from Google Analytics by interfacing with the GA4 API using the [`googleAnalyticsR`](https://github.com/8-bit-sheep/googleAnalyticsR/) package. 
 
 ### OCSdata Downloads
-`OCSdata` package downloads data are extracted using the ['packageRank'](https://github.com/lindbrook/packageRank/tree/master) package and visualized using the [`Visualize.CRAN.Downloads`](https://github.com/mponce0/Visualize.CRAN.Downloads) package. 
+`OCSdata` package downloads data are extracted using the [`packageRank`](https://github.com/lindbrook/packageRank/tree/master) package and visualized using the [`Visualize.CRAN.Downloads`](https://github.com/mponce0/Visualize.CRAN.Downloads) package. 
 
 ## Publications
 Results from this analysis are reported in [@mbreshock](https://github.com/mbreshock)'s Master's thesis:
