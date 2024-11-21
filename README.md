@@ -1,5 +1,5 @@
 # OCS_analytics
-Repository for analyzing [`OCSdata`](https://github.com/opencasestudies/OCSdata) package downloads, [OCS survey](https://docs.google.com/forms/d/e/1FAIpQLSfpN4FN3KELqBNEgf2Atpi7Wy7Nqy2beSkFQINL7Y5sAMV5_w/viewform) reviews and feedback, and Google Analytics web traffic and engagement metrics for the [Open Case Studies website](https://www.opencasestudies.org/).
+Repository for analyzing [`OCSdata`](https://github.com/opencasestudies/OCSdata) package downloads, [OCS survey](https://docs.google.com/forms/d/e/1FAIpQLSfpN4FN3KELqBNEgf2Atpi7Wy7Nqy2beSkFQINL7Y5sAMV5_w/viewform) reviews and feedback, and Google Analytics web traffic and engagement metrics for the Open Case Studies [website](https://www.opencasestudies.org/) and case studies. 
 
 ## Data
 ### Survey
